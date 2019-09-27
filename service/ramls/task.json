@@ -1,0 +1,29 @@
+{
+  "$schema" : "http://json-schema.org/draft-04/schema#",
+  "title" : "Task",
+  "type" : "object",
+  "additionalProperties" : false,
+  "properties" : {
+    "id" : {
+      "type" : "string"
+    },
+    "name" : {
+      "type" : "string",
+      "minLength" : 4,
+      "maxLength" : 64
+    },
+    "delegate" : {
+      "type" : "string",
+      "minLength" : 4,
+      "maxLength" : 64
+    },
+    "script" : {
+      "type" : "string"
+    },
+    "scriptType" : {
+      "type" : "string",
+      "enum" : [ "NONE", "GROOVY", "JAVA", "JS", "PYTHON", "RUBY", "XSLT" ]
+    }
+  },
+  "required" : [ "name", "delegate" ]
+}

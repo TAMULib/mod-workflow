@@ -3,14 +3,68 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.folio</groupId>
-  <artifactId>mod-workflow-parent</artifactId>
-  <version>0.1.0</version>
+  <groupId>org.folio.rest.workflow</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>Workflow Parent</name>
+
+  <parent>
+    <groupId>org.folio.spring</groupId>
+    <artifactId>module-core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
   <modules>
-    <module>workflow-components</module>
-    <module>workflow-service</module>
+    <module>components</module>
+    <module>service</module>
   </modules>
+
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>http://spdx.org/licenses/Apache-2.0</url>
+    </license>
+  </licenses>
+
+  <repositories>
+    <repository>
+      <id>folio-nexus</id>
+      <name>FOLIO Maven repository</name>
+      <url>https://repository.folio.org/repository/maven-folio</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>folio-nexus</id>
+      <name>FOLIO Release Repository</name>
+      <url>https://repository.folio.org/repository/maven-releases/</url>
+      <uniqueVersion>false</uniqueVersion>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <id>folio-nexus</id>
+      <name>FOLIO Snapshot Repository</name>
+      <uniqueVersion>true</uniqueVersion>
+      <url>https://repository.folio.org/repository/maven-snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
+    <url>https://github.com/folio-org/mod-workflow</url>
+    <connection>scm:git:git://github.com:folio-org/mod-workflow.git</connection>
+    <developerConnection>scm:git:git@github.com:folio-org/mod-workflow.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
 
 </project>
