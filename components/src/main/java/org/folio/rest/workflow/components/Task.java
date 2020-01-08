@@ -6,34 +6,38 @@ import javax.persistence.Inheritance;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.folio.spring.domain.model.AbstractBaseEntity;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import org.folio.spring.domain.model.AbstractBaseEntity;
-
-@Entity(name="tasks")
+@Entity(name = "tasks")
 @Inheritance
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "deserializeAs")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = ProcessorTask.class, name = "ProcessorTask"),
+  
+  @JsonSubTypes.Type(value = ProcessorTask.class, name = "ProcessorTask"),
 
-    @JsonSubTypes.Type(value = ExtractorTask.class, name = "ExtractorTask"),
+  @JsonSubTypes.Type(value = ExtractorTask.class, name = "ExtractorTask"),
 
-    @JsonSubTypes.Type(value = StreamingExtractorTask.class, name = "StreamingExtractorTask"),
+  @JsonSubTypes.Type(value = StreamingExtractorTask.class, name = "StreamingExtractorTask"),
 
-    @JsonSubTypes.Type(value = AccumulatorTask.class, name = "AccumulatorTask"),
+  @JsonSubTypes.Type(value = AccumulatorTask.class, name = "AccumulatorTask"),
 
-    @JsonSubTypes.Type(value = StreamCreateForEachTask.class, name = "StreamCreateForEachTask"),
+  @JsonSubTypes.Type(value = StreamCreateForEachTask.class, name = "StreamCreateForEachTask"),
 
-    @JsonSubTypes.Type(value = StreamingRequestTask.class, name = "StreamingRequestTask"),
+  @JsonSubTypes.Type(value = StreamingRequestTask.class, name = "StreamingRequestTask"),
 
-    @JsonSubTypes.Type(value = RestRequestTask.class, name = "RestRequestTask"),
+  @JsonSubTypes.Type(value = RestRequestTask.class, name = "RestRequestTask"),
 
-    @JsonSubTypes.Type(value = StreamingReportingTask.class, name = "StreamingReportingTask")
+  @JsonSubTypes.Type(value = StreamingReportingTask.class, name = "StreamingReportingTask"),
 
-  }
-)
+  @JsonSubTypes.Type(value = StreamingFileReadTask.class, name = "StreamingFileReadTask"),
+
+  @JsonSubTypes.Type(value = StreamingFileWriteTask.class, name = "StreamingFileWriteTask")
+
+})
 public abstract class Task extends AbstractBaseEntity {
 
   @NotNull
