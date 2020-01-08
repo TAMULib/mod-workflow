@@ -1,47 +1,27 @@
 package org.folio.rest.workflow.components;
 
-import javax.persistence.Entity;
+import java.util.List;
 
-import org.springframework.http.MediaType;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 
 @Entity
 public class StreamingRequestTask extends Task {
 
-  String storageDestination;
-
-  String contentType;
-
-  String accept;
+  @ElementCollection
+  private List<Request> requests;
 
   public StreamingRequestTask() {
     super();
     setDelegate("streamingRequestDelegate");
-    this.contentType = MediaType.APPLICATION_JSON_VALUE;
-    this.accept = MediaType.APPLICATION_JSON_VALUE;
   }
 
-  public String getStorageDestination() {
-    return storageDestination;
+  public List<Request> getRequests() {
+    return requests;
   }
 
-  public void setStorageDestination(String storageDestination) {
-    this.storageDestination = storageDestination;
-  }
-
-  public String getContentType() {
-    return contentType;
-  }
-
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
-  }
-
-  public String getAccept() {
-    return accept;
-  }
-
-  public void setAccept(String accept) {
-    this.accept = accept;
+  public void setRequests(List<Request> requests) {
+    this.requests = requests;
   }
 
 }
