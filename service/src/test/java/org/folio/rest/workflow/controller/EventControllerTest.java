@@ -64,9 +64,9 @@ class EventControllerTest {
 
   static Stream<Arguments> upload() {
     return Stream.of(
-        arguments("diku", "d1/d2/d3", "filename.txt", "events/diku/d1/d2/d3/filename.txt"),
-        arguments("diku", "", "baz.txt", "events/diku/baz.txt"),
-        arguments("foo", "a/../b", "c/d/../e/f.txt", "events/foo/b/c/e/f.txt"));
+        arguments("diku", "d1" + File.separator + "d2" + File.separator + "d3", "filename.txt", "events" + File.separator + "diku" + File.separator + "d1" + File.separator + "d2" + File.separator + "d3" + File.separator + "filename.txt"),
+        arguments("diku", "", "baz.txt", "events" + File.separator + "diku" + File.separator + "baz.txt"),
+        arguments("foo", "a" + File.separator + ".." + File.separator + "b", "c" + File.separator + "d" + File.separator + ".." + File.separator + "e" + File.separator + "f.txt", "events" + File.separator + "foo" + File.separator + "b" + File.separator + "c" + File.separator + "e" + File.separator + "f.txt"));
   }
 
   @ParameterizedTest
@@ -78,13 +78,13 @@ class EventControllerTest {
 
   static Stream<Arguments> uploadRejected() {
     return Stream.of(
-        arguments("diku/../x", "a", "a.txt"),
-        arguments("diku/../../x", "a", "a.txt"),
-        arguments("diku", "a/../../x", "a.txt"),
-        arguments("diku", "../x", "a.txt"),
-        arguments("diku", "a", "../../x.txt"),
-        arguments("diku", "a", "../../../x.txt"),
-        arguments("diku", "a", "../../../../x.txt"));
+        arguments("diku" + File.separator + ".." + File.separator + "x", "a", "a.txt"),
+        arguments("diku" + File.separator + ".." + File.separator + ".." + File.separator + "x", "a", "a.txt"),
+        arguments("diku", "a" + File.separator + ".." + File.separator + ".." + File.separator + "x", "a.txt"),
+        arguments("diku", ".." + File.separator + "x", "a.txt"),
+        arguments("diku", "a", ".." + File.separator + ".." + File.separator + "x.txt"),
+        arguments("diku", "a", ".." + File.separator + ".." + File.separator + ".." + File.separator + "x.txt"),
+        arguments("diku", "a", ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "x.txt"));
   }
 
   MockHttpServletRequestBuilder upload(String tenant, String dir, String file) throws Exception {
