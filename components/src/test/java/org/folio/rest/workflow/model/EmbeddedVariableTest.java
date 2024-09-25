@@ -93,4 +93,19 @@ class EmbeddedVariableTest {
     assertEquals(true, getField(embeddedVariable, "asTransient"));
   }
 
+  @Test
+  void getAsSecureWorksTest() {
+    setField(embeddedVariable, "asSecure", true);
+
+    assertEquals(true, embeddedVariable.getAsSecure());
+  }
+
+  @Test
+  void setAsSecureWorksTest() {
+    setField(embeddedVariable, "asSecure", false);
+
+    embeddedVariable.setAsSecure(true);
+    assertEquals(true, getField(embeddedVariable, "asSecure"));
+  }
+
 }

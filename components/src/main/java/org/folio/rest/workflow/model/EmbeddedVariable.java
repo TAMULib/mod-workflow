@@ -47,11 +47,18 @@ public class EmbeddedVariable implements HasEmbeddedVariableCommon {
   @ColumnDefault("false")
   private Boolean asTransient;
 
+  @Getter
+  @Setter
+  @Column(nullable = false)
+  @ColumnDefault("false")
+  private Boolean asSecure;
+
   public EmbeddedVariable() {
     super();
 
     asJson = false;
     asTransient = false;
+    asSecure = false;
     spin = false;
     type = VariableType.PROCESS;
   }
@@ -64,6 +71,10 @@ public class EmbeddedVariable implements HasEmbeddedVariableCommon {
 
     if (asTransient == null) {
       asTransient = false;
+    }
+
+    if (asTransient == null) {
+      asSecure = false;
     }
 
     if (spin == null) {
