@@ -1,6 +1,7 @@
 package org.folio.rest.workflow.controller.advice;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.folio.rest.workflow.exception.SecureOperationException;
 import org.folio.rest.workflow.exception.WorkflowAlreadyActiveException;
 import org.folio.rest.workflow.exception.WorkflowDeploymentException;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
@@ -52,6 +53,13 @@ public class WorkflowControllerAdvice {
   @ExceptionHandler(WorkflowEngineServiceException.class)
   public ResponseErrors handleWorkflowEngineServiceException(WorkflowEngineServiceException exception) {
     logger.debug(exception.getMessage(), exception);
+    return ErrorUtility.buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(SecureOperationException.class)
+  public ResponseErrors handleSecureOperationException(SecureOperationException exception) {
+    logger.error(exception.getMessage(), exception);
     return ErrorUtility.buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
