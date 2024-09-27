@@ -1,11 +1,13 @@
 package org.folio.rest.workflow.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import org.folio.rest.workflow.model.components.DelegateTask;
+import org.folio.rest.workflow.model.converter.CryptoConverter;
 import org.folio.rest.workflow.model.has.HasDesignation;
 import org.folio.rest.workflow.model.has.HasPassword;
 import org.folio.rest.workflow.model.has.HasUrl;
@@ -22,6 +24,7 @@ public class DatabaseConnectionTask extends AbstractTask implements DelegateTask
   @Getter
   @Setter
   @Column(nullable = true)
+  @Convert(converter = CryptoConverter.class)
   private String password;
 
   @Getter

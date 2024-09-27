@@ -1,6 +1,7 @@
 package org.folio.rest.workflow.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.folio.rest.workflow.enums.SftpOp;
 import org.folio.rest.workflow.model.components.DelegateTask;
+import org.folio.rest.workflow.model.converter.CryptoConverter;
 import org.folio.rest.workflow.model.has.HasPassword;
 import org.folio.rest.workflow.model.has.HasService;
 import org.folio.rest.workflow.model.has.HasUsername;
@@ -41,6 +43,7 @@ public class FtpTask extends AbstractTask implements DelegateTask, HasFtpTaskCom
   @Getter
   @Setter
   @Column(nullable = true)
+  @Convert(converter = CryptoConverter.class)
   private String password;
 
   @Getter

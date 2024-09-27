@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 
 /**
- * This converts the value into a JSON representation stored as a single string tin the database.
+ * This converts the value into a JSON representation stored as a single string in the database.
  */
 public abstract class AbstractConverter<T> implements AttributeConverter<T, String> {
 
