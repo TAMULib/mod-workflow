@@ -92,4 +92,5 @@ class CryptoConverterTest {
     String encrypted2 = cryptoConverter.convertToDatabaseColumn(input);
     assertNotEquals(encrypted1, encrypted2);
   }
+
 }

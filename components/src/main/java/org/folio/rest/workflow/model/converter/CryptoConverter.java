@@ -24,79 +24,79 @@ import org.springframework.stereotype.Component;
 @Converter
 public class CryptoConverter implements AttributeConverter<String, String> {
 
-    private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
-    private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
-    private static final int KEY_SIZE = 128;
+  private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
+  private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
+  private static final int KEY_SIZE = 128;
 
-    private static final String ENCRYPTION_SECRET_PROPERTY = "encryption.secret";
+  private static final String ENCRYPTION_SECRET_PROPERTY = "encryption.secret";
 
-    static {
-        Security.addProvider(new BouncyCastleProvider());
+  static {
+    Security.addProvider(new BouncyCastleProvider());
+  }
+
+  private static Environment environment;
+
+  @Autowired
+  public void setEnvironment(Environment env) {
+    environment = env;
+  }
+
+  @Override
+  public String convertToDatabaseColumn(String entityValue) {
+    if (StringUtils.isEmpty(entityValue)) {
+      return entityValue;
+    }
+    return encrypt(entityValue);
+  }
+
+  @Override
+  public String convertToEntityAttribute(String dbValue) {
+    if (StringUtils.isEmpty(dbValue)) {
+      return dbValue;
+    }
+    return decrypt(dbValue);
+  }
+
+  public String encrypt(String value) {
+    try {
+      Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
+      byte[] encrypted = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
+      return Base64.getEncoder().encodeToString(encrypted);
+    } catch (Exception e) {
+      throw new SecureOperationException("Encryption failed", e);
+    }
+  }
+
+  public String decrypt(String value) {
+    try {
+      Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
+      byte[] decoded = Base64.getDecoder().decode(value);
+      byte[] decrypted = cipher.doFinal(decoded);
+      return new String(decrypted, StandardCharsets.UTF_8);
+    } catch (Exception e) {
+      throw new SecureOperationException("Decryption failed", e);
+    }
+  }
+
+  private Cipher getCipher(int mode) throws Exception {
+    String secret = environment.getProperty(ENCRYPTION_SECRET_PROPERTY);
+
+    if (secret == null || secret.length() != KEY_SIZE / 8) {
+      throw new IllegalArgumentException("Invalid secret length. Expected " + (KEY_SIZE / 8) + " characters.");
     }
 
-    private static Environment environment;
+    Key key = createKey(secret);
 
-    @Autowired
-    public void setEnvironment(Environment env) {
-        environment = env;
-    }
+    Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+    cipher.init(mode, key);
+    return cipher;
+  }
 
-    @Override
-    public String convertToDatabaseColumn(String entityValue) {
-        if (StringUtils.isEmpty(entityValue)) {
-            return entityValue;
-        }
-        return encrypt(entityValue);
-    }
-
-    @Override
-    public String convertToEntityAttribute(String dbValue) {
-        if (StringUtils.isEmpty(dbValue)) {
-            return dbValue;
-        }
-        return decrypt(dbValue);
-    }
-
-    public String encrypt(String value) {
-        try {
-            Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
-            byte[] encrypted = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(encrypted);
-        } catch (Exception e) {
-            throw new SecureOperationException("Encryption failed", e);
-        }
-    }
-
-    public String decrypt(String value) {
-        try {
-            Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
-            byte[] decoded = Base64.getDecoder().decode(value);
-            byte[] decrypted = cipher.doFinal(decoded);
-            return new String(decrypted, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new SecureOperationException("Decryption failed", e);
-        }
-    }
-
-    private Cipher getCipher(int mode) throws Exception {
-        String secret = environment.getProperty(ENCRYPTION_SECRET_PROPERTY);
-
-        if (secret == null || secret.length() != KEY_SIZE / 8) {
-            throw new IllegalArgumentException("Invalid secret length. Expected " + (KEY_SIZE / 8) + " characters.");
-        }
-
-        Key key = createKey(secret);
-
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-        cipher.init(mode, key);
-        return cipher;
-    }
-
-    private Key createKey(String secret) throws Exception {
-        SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
-        PBEKeySpec spec = new PBEKeySpec(secret.toCharArray(), secret.getBytes(StandardCharsets.UTF_8), 65536, KEY_SIZE);
-        SecretKey tmp = factory.generateSecret(spec);
-        return new SecretKeySpec(tmp.getEncoded(), "AES");
-    }
+  private Key createKey(String secret) throws Exception {
+    SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
+    PBEKeySpec spec = new PBEKeySpec(secret.toCharArray(), secret.getBytes(StandardCharsets.UTF_8), 65536, KEY_SIZE);
+    SecretKey tmp = factory.generateSecret(spec);
+    return new SecretKeySpec(tmp.getEncoded(), "AES");
+  }
 
 }
