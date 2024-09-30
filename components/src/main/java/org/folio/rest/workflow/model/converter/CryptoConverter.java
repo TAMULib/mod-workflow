@@ -57,7 +57,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     return decrypt(dbValue);
   }
 
-  public String encrypt(String value) {
+  public static String encrypt(String value) {
     try {
       Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
       byte[] encrypted = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
@@ -67,7 +67,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     }
   }
 
-  public String decrypt(String value) {
+  public static String decrypt(String value) {
     try {
       Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
       byte[] decoded = Base64.getDecoder().decode(value);
@@ -78,7 +78,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     }
   }
 
-  private Cipher getCipher(int mode) throws Exception {
+  private static Cipher getCipher(int mode) throws Exception {
     String secret = environment.getProperty(ENCRYPTION_SECRET_PROPERTY);
 
     if (secret == null || secret.length() != KEY_SIZE / 8) {
@@ -92,7 +92,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
     return cipher;
   }
 
-  private Key createKey(String secret) throws Exception {
+  private static Key createKey(String secret) throws Exception {
     SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
     PBEKeySpec spec = new PBEKeySpec(secret.toCharArray(), secret.getBytes(StandardCharsets.UTF_8), 65536, KEY_SIZE);
     SecretKey tmp = factory.generateSecret(spec);
