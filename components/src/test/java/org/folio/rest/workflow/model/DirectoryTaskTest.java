@@ -8,6 +8,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.folio.rest.workflow.enums.DirectoryAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,12 +75,6 @@ class DirectoryTaskTest {
 
     directoryTask.setDescription(VALUE);
     assertEquals(VALUE, getField(directoryTask, "description"));
-  }
-
-  @Test
-  void testWorkflowGetterAndSetter() {
-      directoryTask.setWorkflow("sampleWorkflow");
-      assertEquals("sampleWorkflow", directoryTask.getWorkflow());
   }
 
   @Test
@@ -170,6 +165,49 @@ class DirectoryTaskTest {
 
     directoryTask.setPath(VALUE);
     assertEquals(VALUE, getField(directoryTask, "path"));
+  }
+
+  @Test
+  void setActionWorksTest() {
+    setField(directoryTask, "action", DirectoryAction.LIST);
+
+    directoryTask.setAction(DirectoryAction.LIST);
+    assertEquals(DirectoryAction.LIST, directoryTask.getAction());
+  }
+
+  @Test
+  void getActionWorksTest() {
+    setField(directoryTask, "action", DirectoryAction.LIST);
+
+    assertEquals(DirectoryAction.LIST, directoryTask.getAction());
+  }
+
+  @Test
+  void getWorkflowWorksTest() {
+    setField(directoryTask, "workflow", VALUE);
+
+    assertEquals(VALUE, directoryTask.getWorkflow());
+  }
+
+  @Test
+  void setWorkflowWorksTest() {
+    setField(directoryTask, "workflow", null);
+
+    directoryTask.setWorkflow(VALUE);
+    assertEquals(VALUE, getField(directoryTask, "workflow"));
+  }
+
+  @Test
+  void prePersistWorksTest() {
+    setField(directoryTask, "path", null);
+    setField(directoryTask, "workflow", null);
+    setField(directoryTask, "action", null);
+
+    directoryTask.prePersist();
+
+    assertEquals("", directoryTask.getPath());
+    assertEquals("", directoryTask.getWorkflow());
+    assertEquals(DirectoryAction.LIST, directoryTask.getAction());
   }
 
 }
