@@ -1,15 +1,23 @@
 package org.folio.rest.workflow.model;
 
+import static org.folio.spring.test.mock.MockMvcConstant.NULL_STR;
 import static org.folio.spring.test.mock.MockMvcConstant.VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -118,6 +126,64 @@ class MoveToNodeTest {
 
     moveToNode.setNodes(nodes);
     assertEquals(nodes, getField(moveToNode, "nodes"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("providePrePersistFor")
+  void prePersistWorksTest(Map<String, Object> initial, Map<String, Object> expected) {
+    initial.forEach((String attribute, Object value) -> {
+      setField(moveToNode, attribute, value);
+    });
+
+    moveToNode.prePersist();
+
+    expected.forEach((String attribute, Object value) -> {
+      assertEquals(value, getField(moveToNode, attribute));
+    });
+  }
+
+  /**
+   * Helper function for parameterized tests for the prePersist function.
+   *
+   * @return
+   *   The arguments array stream with the stream columns as:
+   *     - Arguments initial The initial values.
+   *     - Arguments expect The expected values.
+   */
+  private static Stream<Arguments> providePrePersistFor() {
+    final List<Node> nodeList = new ArrayList<>();
+
+    return Stream.of(
+      Arguments.of(
+        helperFieldMap(NULL_STR, null),
+        helperFieldMap("",       nodeList)
+      ),
+      Arguments.of(
+        helperFieldMap(VALUE,    null),
+        helperFieldMap(VALUE,    nodeList)
+      ),
+      Arguments.of(
+        helperFieldMap(NULL_STR, nodeList),
+        helperFieldMap("",       nodeList)
+      )
+    );
+  }
+
+  /**
+   * Helper for reducing inline code repititon for assignments.
+   *
+   * @param gatewayId The gatewayId value.
+   * @param nodes The nodes value.
+   *
+   * @return The built arguments map.
+   */
+  private static Map<String, Object> helperFieldMap(String gatewayId, List<Node> nodes ) {
+    final Map<String, Object> map = new HashMap<>();
+
+    map.put("gatewayId", gatewayId);
+    map.put("nodes", nodes);
+
+    return map;
   }
 
 }
