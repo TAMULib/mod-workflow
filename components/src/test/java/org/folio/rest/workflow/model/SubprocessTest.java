@@ -6,11 +6,20 @@ import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import org.folio.rest.workflow.enums.SubprocessType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -168,5 +177,59 @@ class SubprocessTest {
     subprocess.setLoopRef(embeddedLoopReference);
     assertEquals(embeddedLoopReference, getField(subprocess, "loopRef"));
   }
+
+  @ParameterizedTest
+  @MethodSource("providePrePersistFor")
+  void prePersistWorksTest(Map<String, Object> initial, Map<String, Object> expected) {
+    initial.forEach((String attribute, Object value) -> {
+      setField(subprocess, attribute, value);
+    });
+
+    subprocess.prePersist();
+
+    expected.forEach((String attribute, Object value) -> {
+      assertEquals(value, getField(subprocess, attribute));
+    });
+  }
+
+  /**
+   * Helper function for parameterized tests for the prePersist function.
+   *
+   * @return
+   *   The arguments array stream with the stream columns as:
+   *     - Arguments initial The initial values.
+   *     - Arguments expect The expected values.
+   */
+  private static Stream<Arguments> providePrePersistFor() {
+    final Set<EmbeddedVariable> ivList = new HashSet<>();
+    ivList.add(new EmbeddedVariable());
+
+    return Stream.of(
+      Arguments.of(
+        helperFieldMap(null),
+        helperFieldMap(SubprocessType.EMBEDDED)
+      ),
+      Arguments.of(
+        helperFieldMap(SubprocessType.EMBEDDED),
+        helperFieldMap(SubprocessType.EMBEDDED)
+      )
+    );
+  }
+
+  /**
+   * Helper for reducing inline code repititon for assignments.
+   *
+   * @param type The type value.
+   *
+   * @return The built arguments map.
+   */
+  private static Map<String, Object> helperFieldMap(SubprocessType type) {
+    final Map<String, Object> map = new HashMap<>();
+
+    map.put("type", type);
+
+    return map;
+  }
+
 
 }
