@@ -6,12 +6,22 @@ import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.folio.rest.workflow.enums.StartEventType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @ExtendWith(MockitoExtension.class)
 class WorkflowTest {
@@ -166,6 +176,67 @@ class WorkflowTest {
 
     workflow.setSetup(setup);
     assertEquals(setup, getField(workflow, "setup"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("providePrePersistFor")
+  void prePersistWorksTest(Map<String, Object> initial, Map<String, Object> expected) {
+    initial.forEach((String attribute, Object value) -> {
+      setField(workflow, attribute, value);
+    });
+
+    workflow.prePersist();
+
+    expected.forEach((String attribute, Object value) -> {
+      assertEquals(value, getField(workflow, attribute));
+    });
+  }
+
+  /**
+   * Helper function for parameterized tests for the prePersist function.
+   *
+   * @return
+   *   The arguments array stream with the stream columns as:
+   *     - Arguments initial The initial values.
+   *     - Arguments expect The expected values.
+   */
+  private static Stream<Arguments> providePrePersistFor() {
+
+    return Stream.of(
+      Arguments.of(
+        helperFieldMap(null,  null, null, null,            null,              null),
+        helperFieldMap(false, 0,    "",   new HashMap<>(), new ArrayList<>(), "")
+      ),
+      Arguments.of(
+        helperFieldMap(true,  null, VALUE, null,            null,              VALUE),
+        helperFieldMap(true,  0,    VALUE, new HashMap<>(), new ArrayList<>(), VALUE)
+      )
+    );
+  }
+
+  /**
+   * Helper for reducing inline code repititon for assignments.
+   *
+   * @param active The active value.
+   * @param historyTimeToLive The historyTimeToLive value.
+   * @param name The name value.
+   * @param initialContext The initialContext value.
+   * @param nodes The nodes value.
+   * @param versionTag The versionTag value.
+   *
+   * @return The built arguments map.
+   */
+  private static Map<String, Object> helperFieldMap(Boolean active, Integer historyTimeToLive, String name, Map<String, JsonNode> initialContext, List<Node> nodes, String versionTag) {
+    final Map<String, Object> map = new HashMap<>();
+
+    map.put("active", active);
+    map.put("historyTimeToLive", historyTimeToLive);
+    map.put("name", name);
+    map.put("initialContext", initialContext);
+    map.put("nodes", nodes);
+    map.put("versionTag", versionTag);
+
+    return map;
   }
 
 }
