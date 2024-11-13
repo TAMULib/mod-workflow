@@ -1,16 +1,25 @@
 package org.folio.rest.workflow.model;
 
+import static org.folio.spring.test.mock.MockMvcConstant.INT_VALUE;
+import static org.folio.spring.test.mock.MockMvcConstant.NULL_STR;
 import static org.folio.spring.test.mock.MockMvcConstant.VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
+
 import org.folio.rest.workflow.enums.SftpOp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -269,6 +278,87 @@ class FtpTaskTest {
 
     ftpTask.setPassword(VALUE);
     assertEquals(VALUE, getField(ftpTask, "password"));
+  }
+
+  @Test
+  void setBasePathDoesNothingTest() {
+    ftpTask.setBasePath("");
+    assertEquals("", ftpTask.getBasePath());
+  }
+
+  @Test
+  void getBasePathWorksTest() {
+
+    assertEquals("", ftpTask.getBasePath());
+  }
+
+  @ParameterizedTest
+  @MethodSource("providePrePersistFor")
+  void prePersistWorksTest(Map<String, Object> initial, Map<String, Object> expected) {
+    initial.forEach((String attribute, Object value) -> {
+      setField(ftpTask, attribute, value);
+    });
+
+    ftpTask.prePersist();
+
+    expected.forEach((String attribute, Object value) -> {
+      assertEquals(value, getField(ftpTask, attribute));
+    });
+  }
+
+  /**
+   * Helper function for parameterized tests for the prePersist function.
+   *
+   * @return
+   *   The arguments array stream with the stream columns as:
+   *     - Arguments initial The initial values.
+   *     - Arguments expect The expected values.
+   */
+  private static Stream<Arguments> providePrePersistFor() {
+
+    return Stream.of(
+      Arguments.of(
+        helperFieldMap(NULL_STR, NULL_STR, null,       NULL_STR, null,      NULL_STR),
+        helperFieldMap("",       "",       SftpOp.GET, "",       80,        "")
+      ),
+      Arguments.of(
+        helperFieldMap(VALUE,    NULL_STR, SftpOp.PUT, NULL_STR, null,      NULL_STR),
+        helperFieldMap(VALUE,    "",       SftpOp.PUT, "",       80,        "")
+      ),
+      Arguments.of(
+        helperFieldMap(VALUE,    VALUE,     null,       VALUE,    null,      NULL_STR),
+        helperFieldMap(VALUE,    VALUE  ,   SftpOp.GET, VALUE,    80,        "")
+      ),
+      Arguments.of(
+        helperFieldMap(VALUE,   VALUE,     SftpOp.PUT, VALUE,    INT_VALUE, VALUE),
+        helperFieldMap(VALUE,   VALUE  ,   SftpOp.PUT, VALUE,    INT_VALUE, VALUE)
+      )
+    );
+  }
+
+  /**
+   * Helper for reducing inline code repititon for assignments.
+   *
+   * @param destinationPath The destinationPath value.
+   * @param host The host value.
+   * @param op The op value.
+   * @param originPath The originPath value.
+   * @param port The port value.
+   * @param scheme The scheme value.
+   *
+   * @return The built arguments map.
+   */
+  private static Map<String, Object> helperFieldMap(String destinationPath, String host, SftpOp op, String originPath, Integer port, String scheme ) {
+    final Map<String, Object> map = new HashMap<>();
+
+    map.put("destinationPath", destinationPath);
+    map.put("host", host);
+    map.put("op", op);
+    map.put("originPath", originPath);
+    map.put("port", port);
+    map.put("scheme", scheme);
+
+    return map;
   }
 
 }
