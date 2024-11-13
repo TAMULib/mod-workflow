@@ -5,9 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import org.folio.rest.workflow.enums.StartEventType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class StartEventTest {
 
@@ -138,6 +147,69 @@ class StartEventTest {
     assertEquals(true, getField(startEvent, "asyncBefore"));
   }
 
-  private static class Impl extends StartEvent { };
+  @ParameterizedTest
+  @MethodSource("providePrePersistFor")
+  void prePersistWorksTest(Map<String, Object> initial, Map<String, Object> expected) {
+    initial.forEach((String attribute, Object value) -> {
+      setField(startEvent, attribute, value);
+    });
+
+    startEvent.prePersist();
+
+    expected.forEach((String attribute, Object value) -> {
+      assertEquals(value, getField(startEvent, attribute));
+    });
+  }
+
+  /**
+   * Helper function for parameterized tests for the prePersist function.
+   *
+   * @return
+   *   The arguments array stream with the stream columns as:
+   *     - Arguments initial The initial values.
+   *     - Arguments expect The expected values.
+   */
+  private static Stream<Arguments> providePrePersistFor() {
+
+    return Stream.of(
+      Arguments.of(
+        helperFieldMap(null,  null,  null),
+        helperFieldMap(false, false, StartEventType.NONE)
+      ),
+      Arguments.of(
+        helperFieldMap(true,  true,  StartEventType.MESSAGE_CORRELATION),
+        helperFieldMap(true,  true,  StartEventType.MESSAGE_CORRELATION)
+      ),
+      Arguments.of(
+        helperFieldMap(null,  true,  null),
+        helperFieldMap(false, true,  StartEventType.NONE)
+      ),
+      Arguments.of(
+        helperFieldMap(true,  null,  null),
+        helperFieldMap(true,  false, StartEventType.NONE)
+      )
+    );
+  }
+
+  /**
+   * Helper for reducing inline code repititon for assignments.
+   *
+   * @param asyncBefore The asyncBefore value.
+   * @param interrupting The interrupting value.
+   * @param type The type value.
+   *
+   * @return The built arguments map.
+   */
+  private static Map<String, Object> helperFieldMap(Boolean asyncBefore, Boolean interrupting, StartEventType type) {
+    final Map<String, Object> map = new HashMap<>();
+
+    map.put("asyncBefore", asyncBefore);
+    map.put("interrupting", interrupting);
+    map.put("type", type);
+
+    return map;
+  }
+
+  private static class Impl extends StartEvent { }
 
 }
