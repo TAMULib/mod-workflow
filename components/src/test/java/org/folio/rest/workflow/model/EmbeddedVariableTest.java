@@ -130,24 +130,20 @@ class EmbeddedVariableTest {
         helperFieldMap(false, false, false, VariableType.PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(false, false, false, VariableType.PROCESS),
-        helperFieldMap(false, false, false, VariableType.PROCESS)
+        helperFieldMap(true,  null,  null,  null),
+        helperFieldMap(true,  false, false, VariableType.PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(true,  true,  true,  null),
-        helperFieldMap(true,  true,  true, VariableType.PROCESS)
+        helperFieldMap(null,  true,  null,  null),
+        helperFieldMap(false, true,  false, VariableType.PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(true,  true,  true,  VariableType.LOCAL),
-        helperFieldMap(true,  true, true,   VariableType.LOCAL)
+        helperFieldMap(null,  null,  true,  null),
+        helperFieldMap(false, false, true,  VariableType.PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(null,  null,  null,  VariableType.PROCESS),
-        helperFieldMap(false, false, false, VariableType.PROCESS)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  true,  true,  null),
-        helperFieldMap(false, true,  true,  VariableType.PROCESS)
+        helperFieldMap(null,  null,  null,  VariableType.LOCAL),
+        helperFieldMap(false, false, false, VariableType.LOCAL)
       )
     );
   }

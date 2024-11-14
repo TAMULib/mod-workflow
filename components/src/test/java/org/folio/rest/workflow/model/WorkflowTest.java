@@ -1,5 +1,6 @@
 package org.folio.rest.workflow.model;
 
+import static org.folio.spring.test.mock.MockMvcConstant.INT_VALUE;
 import static org.folio.spring.test.mock.MockMvcConstant.VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
@@ -200,15 +201,39 @@ class WorkflowTest {
    *     - Arguments expect The expected values.
    */
   private static Stream<Arguments> providePrePersistFor() {
+    final Map<String, JsonNode> context = new HashMap<>();
+    context.put(VALUE, null);
+
+    final List<Node> nodeList = new ArrayList<>();
 
     return Stream.of(
       Arguments.of(
-        helperFieldMap(null,  null, null, null,            null,              null),
-        helperFieldMap(false, 0,    "",   new HashMap<>(), new ArrayList<>(), "")
+        helperFieldMap(null,  null,      null,  null,            null,              null),
+        helperFieldMap(false, 0,         "",    new HashMap<>(), new ArrayList<>(), "")
       ),
       Arguments.of(
-        helperFieldMap(true,  null, VALUE, null,            null,              VALUE),
-        helperFieldMap(true,  0,    VALUE, new HashMap<>(), new ArrayList<>(), VALUE)
+        helperFieldMap(true,  null,      null,  null,            null,              null),
+        helperFieldMap(true,  0,         "",    new HashMap<>(), new ArrayList<>(), "")
+      ),
+      Arguments.of(
+        helperFieldMap(null,  INT_VALUE, null,  null,            null,              null),
+        helperFieldMap(false, INT_VALUE, "",    new HashMap<>(), new ArrayList<>(), "")
+      ),
+      Arguments.of(
+        helperFieldMap(null,  null,      VALUE, null,            null,              null),
+        helperFieldMap(false, 0,         VALUE, new HashMap<>(), new ArrayList<>(), "")
+      ),
+      Arguments.of(
+        helperFieldMap(true,  null,      null,  context,         null,              null),
+        helperFieldMap(true,  0,         "",    context,         new ArrayList<>(), "")
+      ),
+      Arguments.of(
+        helperFieldMap(null,  null,      null,  null,            nodeList,          null),
+        helperFieldMap(false, 0,         "",    new HashMap<>(), nodeList,          "")
+      ),
+      Arguments.of(
+        helperFieldMap(null,  null,      null,  null,            null,              VALUE),
+        helperFieldMap(false, 0,         "",    new HashMap<>(), new ArrayList<>(), VALUE)
       )
     );
   }

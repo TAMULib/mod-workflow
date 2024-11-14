@@ -175,16 +175,16 @@ class StartEventTest {
         helperFieldMap(false, false, StartEventType.NONE)
       ),
       Arguments.of(
-        helperFieldMap(true,  true,  StartEventType.MESSAGE_CORRELATION),
-        helperFieldMap(true,  true,  StartEventType.MESSAGE_CORRELATION)
+        helperFieldMap(true,  null,  null),
+        helperFieldMap(true,  false, StartEventType.NONE)
       ),
       Arguments.of(
         helperFieldMap(null,  true,  null),
         helperFieldMap(false, true,  StartEventType.NONE)
       ),
       Arguments.of(
-        helperFieldMap(true,  null,  null),
-        helperFieldMap(true,  false, StartEventType.NONE)
+        helperFieldMap(null,  null,  StartEventType.SCHEDULED),
+        helperFieldMap(false, false, StartEventType.SCHEDULED)
       )
     );
   }

@@ -210,8 +210,8 @@ class SubprocessTest {
         helperFieldMap(SubprocessType.EMBEDDED)
       ),
       Arguments.of(
-        helperFieldMap(SubprocessType.EMBEDDED),
-        helperFieldMap(SubprocessType.EMBEDDED)
+        helperFieldMap(SubprocessType.TRANSACTION),
+        helperFieldMap(SubprocessType.TRANSACTION)
       )
     );
   }

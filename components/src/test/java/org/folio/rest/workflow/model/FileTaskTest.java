@@ -249,12 +249,12 @@ class FileTaskTest {
         helperFieldMap(FileOp.READ,      "")
       ),
       Arguments.of(
-        helperFieldMap(null,             VALUE),
-        helperFieldMap(FileOp.READ,      VALUE)
+        helperFieldMap(FileOp.WRITE,     NULL_STR),
+        helperFieldMap(FileOp.WRITE,     "")
       ),
       Arguments.of(
-        helperFieldMap(FileOp.READ,      NULL_STR),
-        helperFieldMap(FileOp.READ,      "")
+        helperFieldMap(null,             VALUE),
+        helperFieldMap(FileOp.READ,      VALUE)
       ),
       Arguments.of(
         helperFieldMap(FileOp.READ_LINE, VALUE),

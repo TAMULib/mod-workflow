@@ -322,16 +322,32 @@ class FtpTaskTest {
         helperFieldMap("",       "",       SftpOp.GET, "",       80,        "")
       ),
       Arguments.of(
-        helperFieldMap(VALUE,    NULL_STR, SftpOp.PUT, NULL_STR, null,      NULL_STR),
-        helperFieldMap(VALUE,    "",       SftpOp.PUT, "",       80,        "")
+        helperFieldMap(VALUE,    NULL_STR, null,       NULL_STR, null,      NULL_STR),
+        helperFieldMap(VALUE,    "",       SftpOp.GET, "",       80,        "")
       ),
       Arguments.of(
-        helperFieldMap(VALUE,    VALUE,     null,       VALUE,    null,      NULL_STR),
-        helperFieldMap(VALUE,    VALUE  ,   SftpOp.GET, VALUE,    80,        "")
+        helperFieldMap(NULL_STR, VALUE,    null,       NULL_STR, null,      NULL_STR),
+        helperFieldMap("",       VALUE,    SftpOp.GET, "",       80,        "")
       ),
       Arguments.of(
-        helperFieldMap(VALUE,   VALUE,     SftpOp.PUT, VALUE,    INT_VALUE, VALUE),
-        helperFieldMap(VALUE,   VALUE  ,   SftpOp.PUT, VALUE,    INT_VALUE, VALUE)
+        helperFieldMap(NULL_STR, NULL_STR, SftpOp.PUT, NULL_STR, null,      NULL_STR),
+        helperFieldMap("",       "",       SftpOp.PUT, "",       80,        "")
+      ),
+      Arguments.of(
+        helperFieldMap(NULL_STR, NULL_STR, null,       VALUE,    null,      NULL_STR),
+        helperFieldMap("",       "",       SftpOp.GET, VALUE,    80,        "")
+      ),
+      Arguments.of(
+        helperFieldMap(NULL_STR, NULL_STR, null,       NULL_STR, INT_VALUE, NULL_STR),
+        helperFieldMap("",       "",       SftpOp.GET, "",       INT_VALUE, "")
+      ),
+      Arguments.of(
+        helperFieldMap(NULL_STR, NULL_STR, null,       NULL_STR, null,      VALUE),
+        helperFieldMap("",       "",       SftpOp.GET, "",       80,        VALUE)
+      ),
+      Arguments.of(
+        helperFieldMap(VALUE,    VALUE,    SftpOp.PUT, VALUE,    INT_VALUE, VALUE),
+        helperFieldMap(VALUE,    VALUE,    SftpOp.PUT, VALUE,    INT_VALUE, VALUE)
       )
     );
   }

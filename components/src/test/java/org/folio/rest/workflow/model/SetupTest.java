@@ -83,16 +83,16 @@ class SetupTest {
         helperFieldMap(false, false)
       ),
       Arguments.of(
-        helperFieldMap(true,  true),
-        helperFieldMap(true,  true)
+        helperFieldMap(true,  null),
+        helperFieldMap(true,  false)
       ),
       Arguments.of(
         helperFieldMap(null,  true),
         helperFieldMap(false, true)
       ),
       Arguments.of(
-        helperFieldMap(true,  null),
-        helperFieldMap(true,  false)
+        helperFieldMap(true,  true),
+        helperFieldMap(true,  true)
       )
     );
   }

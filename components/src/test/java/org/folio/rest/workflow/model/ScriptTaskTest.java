@@ -230,8 +230,12 @@ class ScriptTaskTest {
         helperFieldMap("",       "javaScript")
       ),
       Arguments.of(
-        helperFieldMap(VALUE,    VALUE),
-        helperFieldMap(VALUE,    VALUE)
+        helperFieldMap(VALUE,    NULL_STR),
+        helperFieldMap(VALUE,    "javaScript")
+      ),
+      Arguments.of(
+        helperFieldMap(NULL_STR, VALUE),
+        helperFieldMap("",       VALUE)
       )
     );
   }
