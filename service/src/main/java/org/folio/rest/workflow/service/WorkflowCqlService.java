@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.folio.rest.workflow.model.Workflow;
 import org.folio.rest.workflow.model.repo.WorkflowRepo;
 import org.folio.spring.data.OffsetRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ public class WorkflowCqlService extends AbstractCqlService<Workflow> {
 
   private WorkflowRepo repo;
 
-  @Autowired
   public WorkflowCqlService(ObjectMapper mapper, WorkflowRepo repo) {
     this.mapper = mapper;
     this.repo = repo;

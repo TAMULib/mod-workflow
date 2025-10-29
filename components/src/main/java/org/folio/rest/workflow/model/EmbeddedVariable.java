@@ -39,6 +39,12 @@ public class EmbeddedVariable implements HasEmbeddedVariableCommon {
   @Setter
   @Column(nullable = false)
   @ColumnDefault("false")
+  private Boolean asArray;
+
+  @Getter
+  @Setter
+  @Column(nullable = false)
+  @ColumnDefault("false")
   private Boolean asJson;
 
   @Getter
@@ -50,6 +56,7 @@ public class EmbeddedVariable implements HasEmbeddedVariableCommon {
   public EmbeddedVariable() {
     super();
 
+    asArray = false;
     asJson = false;
     asTransient = false;
     spin = false;
@@ -58,6 +65,10 @@ public class EmbeddedVariable implements HasEmbeddedVariableCommon {
 
   @PrePersist
   public void prePersist() {
+    if (asArray == null) {
+      asArray = false;
+    }
+
     if (asJson == null) {
       asJson = false;
     }

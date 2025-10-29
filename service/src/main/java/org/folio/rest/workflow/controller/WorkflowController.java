@@ -17,7 +17,6 @@ import org.folio.rest.workflow.service.WorkflowEngineService;
 import org.folio.rest.workflow.service.WorkflowImportService;
 import org.folio.spring.tenant.annotation.TenantHeader;
 import org.folio.spring.web.annotation.TokenHeader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,7 +44,6 @@ public class WorkflowController {
 
   private WorkflowRepo workflowRepo;
 
-  @Autowired
   public WorkflowController(WorkflowEngineService workflowEngineService, WorkflowCqlService workflowCqlService, WorkflowImportService workflowImportService, WorkflowRepo workflowRepo) {
     this.workflowEngineService = workflowEngineService;
     this.workflowCqlService = workflowCqlService;

@@ -3,7 +3,6 @@ package org.folio.rest.workflow.kafka;
 import org.folio.spring.messaging.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ public class EventProducer {
 
   private KafkaTemplate<String, Event> eventTemplate;
 
-  @Autowired
   public EventProducer(KafkaTemplate<String, Event> eventTemplate) {
     this.eventTemplate = eventTemplate;
   }

@@ -2,11 +2,9 @@ package org.folio.rest.workflow.controller;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.folio.rest.workflow.model.Action;
 import org.folio.rest.workflow.service.OkapiDiscoveryService;
 import org.folio.spring.tenant.annotation.TenantHeader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +16,6 @@ public class ActionController {
 
   private OkapiDiscoveryService okapiDiscoveryService;
 
-  @Autowired
   public ActionController(OkapiDiscoveryService okapiDiscoveryService) {
     this.okapiDiscoveryService = okapiDiscoveryService;
   }

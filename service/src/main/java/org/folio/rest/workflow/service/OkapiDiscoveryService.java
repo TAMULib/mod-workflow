@@ -14,7 +14,6 @@ import org.folio.rest.workflow.model.Handler;
 import org.folio.spring.web.service.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -48,7 +47,6 @@ public class OkapiDiscoveryService {
 
   private ObjectMapper objectMapper;
 
-  @Autowired
   public OkapiDiscoveryService(HttpService httpService, ObjectMapper objectMapper) {
     this.httpService = httpService;
     this.objectMapper = objectMapper;

@@ -25,7 +25,6 @@ import org.folio.spring.messaging.model.Event;
 import org.folio.spring.tenant.annotation.TenantHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.util.PathMatcher;
@@ -58,7 +57,6 @@ public class EventController {
 
   private ObjectMapper objectMapper;
 
-  @Autowired
   public EventController(EventProducer eventProducer, TriggerRepo triggerRepo, PathMatcher pathMatcher, ObjectMapper objectMapper) {
     this.eventProducer = eventProducer;
     this.triggerRepo = triggerRepo;

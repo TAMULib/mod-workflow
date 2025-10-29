@@ -59,7 +59,6 @@ import org.folio.rest.workflow.model.repo.NodeRepo;
 import org.folio.rest.workflow.model.repo.TriggerRepo;
 import org.folio.rest.workflow.model.repo.WorkflowRepo;
 import org.folio.rest.workflow.utility.CompressFileMagic;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +74,6 @@ public class WorkflowImportService {
 
   private WorkflowRepo workflowRepo;
 
-  @Autowired
   public WorkflowImportService(ObjectMapper objectMapper, NodeRepo nodeRepo, TriggerRepo triggerRepo, WorkflowRepo workflowRepo) {
     this.objectMapper = objectMapper;
     this.nodeRepo = nodeRepo;

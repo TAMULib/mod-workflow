@@ -10,7 +10,6 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-
 import org.folio.rest.workflow.enums.VariableType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,6 +72,21 @@ class EmbeddedVariableTest {
   }
 
   @Test
+  void getAsArrayWorksTest() {
+    setField(embeddedVariable, "asArray", true);
+
+    assertEquals(true, embeddedVariable.getAsArray());
+  }
+
+  @Test
+  void setAsArrayWorksTest() {
+    setField(embeddedVariable, "asArray", false);
+
+    embeddedVariable.setAsArray(true);
+    assertEquals(true, getField(embeddedVariable, "asArray"));
+  }
+
+  @Test
   void getAsJsonWorksTest() {
     setField(embeddedVariable, "asJson", true);
 
@@ -128,24 +142,28 @@ class EmbeddedVariableTest {
 
     return Stream.of(
       Arguments.of(
-        helperFieldMap(null,  null,  null,  null),
-        helperFieldMap(false, false, false, PROCESS)
+        helperFieldMap(null, null,  null,  null,  null),
+        helperFieldMap(false, false, false, false, PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(true,  null,  null,  null),
-        helperFieldMap(true,  false, false, PROCESS)
+        helperFieldMap(true, null,  null,  null,  null),
+        helperFieldMap(true, false, false, false, PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(null,  true,  null,  null),
-        helperFieldMap(false, true,  false, PROCESS)
+        helperFieldMap(null, true,  null,  null,  null),
+        helperFieldMap(false, true,  false, false, PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(null,  null,  true,  null),
-        helperFieldMap(false, false, true,  PROCESS)
+        helperFieldMap(null, null,  true,  null,  null),
+        helperFieldMap(false, false, true,  false, PROCESS)
       ),
       Arguments.of(
-        helperFieldMap(null,  null,  null,  LOCAL),
-        helperFieldMap(false, false, false, LOCAL)
+        helperFieldMap(null, null,  null,  true,  null),
+        helperFieldMap(false, false, false, true,  PROCESS)
+      ),
+      Arguments.of(
+        helperFieldMap(null, null,  null,  null,  LOCAL),
+        helperFieldMap(false, false, false, false, LOCAL)
       )
     );
   }
@@ -153,6 +171,7 @@ class EmbeddedVariableTest {
   /**
    * Helper for reducing inline code repititon for assignments.
    *
+   * @param asArray The asArray value.
    * @param asJson The asJson value.
    * @param asTransient The asTransient value.
    * @param spin The spin value.
@@ -160,9 +179,10 @@ class EmbeddedVariableTest {
    *
    * @return The built arguments map.
    */
-  private static Map<String, Object> helperFieldMap(Boolean asJson, Boolean asTransient, Boolean spin, VariableType type ) {
+  private static Map<String, Object> helperFieldMap(Boolean asArray, Boolean asJson, Boolean asTransient, Boolean spin, VariableType type) {
     final Map<String, Object> map = new HashMap<>();
 
+    map.put("asArray", asArray);
     map.put("asJson", asJson);
     map.put("asTransient", asTransient);
     map.put("spin", spin);
