@@ -136,7 +136,6 @@ public class EventController {
     logger.debug("Request path: {}", requestPath);
     logger.debug("Request method: {}", method);
     logger.debug("Request headers: {}", headers);
-    logger.debug("Request body: {}", body);
 
     Optional<TriggerDto> trigger = checkTrigger(method, requestPath);
     if (trigger.isPresent()) {

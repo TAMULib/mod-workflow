@@ -36,8 +36,6 @@ public class WorkflowEngineService {
   private static final String HISTORY_PROCESS_INSTANCE_URL_TEMPLATE = "%s%s/history/process-instance%s";
   private static final String HISTORY_INCIDENT_URL_TEMPLATE = "%s%s/history/incident%s";
 
-  private static final String LOG_RESPONSE_BODY = "Response body: {}";
-
   @Value("${tenant.headerName:X-Okapi-Tenant}")
   private String tenantHeaderName;
 
@@ -173,8 +171,6 @@ public class WorkflowEngineService {
 
       ArrayNode definitions = response.getBody();
       if (response.getStatusCode() == HttpStatus.OK && definitions != null && !definitions.isEmpty()) {
-        log.debug(LOG_RESPONSE_BODY, definitions);
-
         return definitions.get(0);
       }
 
@@ -197,8 +193,6 @@ public class WorkflowEngineService {
 
       ArrayNode definitions = response.getBody();
       if (response.getStatusCode() == HttpStatus.OK && definitions != null) {
-        log.debug(LOG_RESPONSE_BODY, definitions);
-
         return definitions;
       }
 
@@ -219,10 +213,7 @@ public class WorkflowEngineService {
       ResponseEntity<ArrayNode> response = exchange(url, HttpMethod.GET, httpEntity, ArrayNode.class);
 
       ArrayNode incidents = response.getBody();
-      if (response.getStatusCode() == HttpStatus.OK && incidents != null) {
-        log.debug(LOG_RESPONSE_BODY, incidents);
-      }
-      else {
+      if (response.getStatusCode() != HttpStatus.OK || incidents == null) {
         log.debug("Unable to get workflow incidents history from workflow engine!");
 
         incidents = mapper.createArrayNode();
@@ -260,8 +251,6 @@ public class WorkflowEngineService {
         Workflow responseWorkflow = response.getBody();
 
         if (responseWorkflow != null) {
-          log.debug(LOG_RESPONSE_BODY, responseWorkflow);
-
           String deploymentId = responseWorkflow.getDeploymentId();
           log.info("Workflow is active = {}, deploymentID = {}", Boolean.TRUE.equals(responseWorkflow.getActive()), deploymentId);
           return workflowRepo.save(responseWorkflow);
