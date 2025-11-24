@@ -104,7 +104,7 @@ public class Workflow extends AbstractBaseEntity implements HasDeploymentId, Has
     historyTimeToLive = 0;
     initialContext = new HashMap<>();
     nodes = new ArrayList<>();
-    versionTag = "";
+    versionTag = "1.0";
   }
 
   @PrePersist
@@ -130,7 +130,7 @@ public class Workflow extends AbstractBaseEntity implements HasDeploymentId, Has
     }
 
     if (versionTag == null) {
-      versionTag = "";
+      versionTag = "1.0";
     }
   }
 
