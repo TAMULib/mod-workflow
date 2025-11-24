@@ -32,6 +32,7 @@ import org.folio.rest.workflow.model.has.HasVersionTag;
 import org.folio.rest.workflow.model.has.common.HasWorkflowCommon;
 import org.folio.spring.domain.model.AbstractBaseEntity;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.Version;
 
 @Entity
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -87,6 +88,7 @@ public class Workflow extends AbstractBaseEntity implements HasDeploymentId, Has
   @Embedded
   private Setup setup;
 
+  @Version
   @Getter
   @Setter
   @NotNull
