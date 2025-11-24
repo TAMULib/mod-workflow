@@ -19,15 +19,31 @@ public class EventControllerAdvice {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(EventPublishException.class)
   public ResponseErrors handleEventPublishException(EventPublishException exception) {
-    logger.debug(exception.getMessage(), exception);
-    return ErrorUtility.buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+    return buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(FileSystemException.class)
   public ResponseErrors handleFileSystemException(FileSystemException exception) {
-    logger.debug(exception.getMessage(), exception);
-    return ErrorUtility.buildError(exception, HttpStatus.BAD_REQUEST);
+    return buildError(exception, HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Build the error message.
+   *
+   * @param ex The exception.
+   * @param code The HTTP Status Code.
+   *
+   * @return The built error response entity.
+   */
+  private ResponseErrors buildError(Exception ex, HttpStatus code) {
+    logger.error(ex.getMessage());
+
+    if (logger.isDebugEnabled()) {
+      ex.printStackTrace();
+    }
+
+    return ErrorUtility.buildError(ex, code);
   }
 
 }
