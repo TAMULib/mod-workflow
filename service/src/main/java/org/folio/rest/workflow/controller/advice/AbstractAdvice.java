@@ -2,16 +2,12 @@ package org.folio.rest.workflow.controller.advice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.folio.spring.web.utility.ErrorUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 abstract class AbstractAdvice extends RequestMappingHandlerMapping {
-
-  private static final Logger logger = LoggerFactory.getLogger(AbstractAdvice.class);
 
   /**
    * Build the error message, with default JSON media type.
