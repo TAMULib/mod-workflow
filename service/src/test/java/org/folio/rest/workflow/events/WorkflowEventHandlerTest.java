@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-public class WorkflowEventHandlerTest {
+class WorkflowEventHandlerTest {
 
   @Mock
   private WorkflowRepo workflowRepo;
@@ -26,7 +26,7 @@ public class WorkflowEventHandlerTest {
   private WorkflowEventHandler workflowEventHandler;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     workflow = new Workflow();
     workflow.setId(UUID);
 
@@ -36,7 +36,7 @@ public class WorkflowEventHandlerTest {
   }
 
   @Test
-  public void testHandleWorkflowCreateDoesNotExist() throws WorkflowCreateAlreadyExistsException {
+  void testHandleWorkflowCreateDoesNotExist() {
     when(workflowRepo.existsByIdAndVersionTag(anyString(), anyString())).thenReturn(false);
 
     Assertions.assertDoesNotThrow(() -> {
@@ -45,7 +45,7 @@ public class WorkflowEventHandlerTest {
   }
 
   @Test
-  public void testHandleWorkflowCreateDoesExist() {
+  void testHandleWorkflowCreateDoesExist() {
     when(workflowRepo.existsByIdAndVersionTag(anyString(), anyString())).thenReturn(true);
 
     Assertions.assertThrows(WorkflowCreateAlreadyExistsException.class, () -> {
