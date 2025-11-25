@@ -36,6 +36,7 @@ public class EventControllerAdvice {
    *
    * @return The built error response entity.
    */
+  @SuppressWarnings("java:S4507") // SonarQube false positive. The stacktrace is protected by debug enabled check.
   private ResponseErrors buildError(Exception ex, HttpStatus code) {
     logger.error(ex.getMessage());
 

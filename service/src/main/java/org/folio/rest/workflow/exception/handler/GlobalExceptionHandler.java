@@ -17,6 +17,7 @@ public class GlobalExceptionHandler {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+  @SuppressWarnings("java:S4507") // SonarQube false positive. The stacktrace is protected by debug enabled check.
   @ExceptionHandler({ TransactionSystemException.class })
   public ResponseEntity<ResponseErrors> handleConstraintViolation(TransactionSystemException ex) {
     logger.error(ex.getMessage());
