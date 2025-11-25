@@ -34,15 +34,10 @@ abstract class AbstractAdvice extends RequestMappingHandlerMapping {
    *
    * @return The built error response entity.
    */
-  @SuppressWarnings("java:S4507") // SonarQube false positive. The stacktrace is protected by debug enabled check.
   protected ResponseEntity<String>  buildError(Exception ex, HttpStatus code, MediaType type) {
     String message = ex.getMessage();
 
-    logger.error(message);
-
-    if (logger.isDebugEnabled()) {
-      ex.printStackTrace();
-    }
+    logger.error(message, logger.isDebugEnabled() ? ex : null);
 
     ObjectMapper mapper = new ObjectMapper();
 
