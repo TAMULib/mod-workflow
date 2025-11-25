@@ -28,7 +28,7 @@ class GlobalAdviceTest {
   }
 
   @Test
-  void handleConstraintViolationWorksTest() throws Exception {
+  void handleConstraintViolationWorksTest() {
     when(transactionSystemException.getRootCause()).thenReturn(runtimeException);
     ResponseEntity<String> response = globalExceptionHandler.handleConstraintViolation(transactionSystemException);
 
