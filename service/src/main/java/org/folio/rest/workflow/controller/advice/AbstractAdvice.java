@@ -1,0 +1,64 @@
+package org.folio.rest.workflow.controller.advice;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.folio.spring.web.utility.ErrorUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+abstract class AbstractAdvice extends RequestMappingHandlerMapping {
+
+  private static final Logger logger = LoggerFactory.getLogger(AbstractAdvice.class);
+
+  /**
+   * Build the error message, with default JSON media type.
+   *
+   * @param ex The exception.
+   * @param code The HTTP Status Code.
+   *
+   * @return The built error response entity.
+   */
+  protected ResponseEntity<String>  buildError(Exception ex, HttpStatus code) {
+    return buildError(ex, code, MediaType.APPLICATION_JSON);
+  }
+
+  /**
+   * Build the error message.
+   *
+   * @param ex The exception.
+   * @param code The HTTP Status Code.
+   * @param type The media type to use.
+   *
+   * @return The built error response entity.
+   */
+  @SuppressWarnings("java:S4507") // SonarQube false positive. The stacktrace is protected by debug enabled check.
+  protected ResponseEntity<String>  buildError(Exception ex, HttpStatus code, MediaType type) {
+    String message = ex.getMessage();
+
+    logger.error(message);
+
+    if (logger.isDebugEnabled()) {
+      ex.printStackTrace();
+    }
+
+    ObjectMapper mapper = new ObjectMapper();
+
+    // The exception handler should ideally not throw its own exceptions.
+    // Catch the exceptions and report it, then fall back to a plain text error message.
+    try {
+      message = mapper.writeValueAsString(ErrorUtility.buildError(ex, code));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+
+      type = MediaType.TEXT_PLAIN;
+    }
+
+    return ResponseEntity.status(code)
+      .contentType(type)
+      .body(message);
+  }
+
+}
