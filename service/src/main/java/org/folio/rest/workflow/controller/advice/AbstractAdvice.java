@@ -46,7 +46,7 @@ abstract class AbstractAdvice extends RequestMappingHandlerMapping {
     try {
       message = mapper.writeValueAsString(ErrorUtility.buildError(ex, code));
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
+      logger.error("Mapping error to JSON Object failed.", e);
 
       type = MediaType.TEXT_PLAIN;
     }
