@@ -14,7 +14,7 @@ abstract class AbstractAdvice extends RequestMappingHandlerMapping {
    *
    * @return objectMapper The object mapper.
    */
-  abstract protected ObjectMapper getObjectMapper();
+  protected abstract ObjectMapper getObjectMapper();
 
   /**
    * Build the error message, with default JSON media type.
