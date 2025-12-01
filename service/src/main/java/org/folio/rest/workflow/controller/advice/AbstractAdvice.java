@@ -10,6 +10,13 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 abstract class AbstractAdvice extends RequestMappingHandlerMapping {
 
   /**
+   * Get the object mapper
+   *
+   * @return objectMapper The object mapper.
+   */
+  abstract protected ObjectMapper getObjectMapper();
+
+  /**
    * Build the error message, with default JSON media type.
    *
    * @param ex The exception.
@@ -35,12 +42,10 @@ abstract class AbstractAdvice extends RequestMappingHandlerMapping {
 
     logger.error(message, logger.isDebugEnabled() ? ex : null);
 
-    ObjectMapper mapper = new ObjectMapper();
-
     // The exception handler should ideally not throw its own exceptions.
     // Catch the exceptions and report it, then fall back to a plain text error message.
     try {
-      message = mapper.writeValueAsString(ErrorUtility.buildError(ex, code));
+      message = getObjectMapper().writeValueAsString(ErrorUtility.buildError(ex, code));
     } catch (JsonProcessingException e) {
       logger.error("Mapping error to JSON Object failed.", e);
 

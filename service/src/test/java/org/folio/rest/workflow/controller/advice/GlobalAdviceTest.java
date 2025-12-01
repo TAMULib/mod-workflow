@@ -20,17 +20,17 @@ class GlobalAdviceTest {
   @Mock
   private TransactionSystemException transactionSystemException;
 
-  private GlobalAdvice globalExceptionHandler;
+  private GlobalAdvice globalAdvice;
 
   @BeforeEach
   void beforeEach() {
-    globalExceptionHandler = new GlobalAdvice();
+    globalAdvice = new GlobalAdvice();
   }
 
   @Test
   void handleConstraintViolationWorksTest() {
     when(transactionSystemException.getRootCause()).thenReturn(runtimeException);
-    ResponseEntity<String> response = globalExceptionHandler.handleConstraintViolation(transactionSystemException);
+    ResponseEntity<String> response = globalAdvice.handleConstraintViolation(transactionSystemException);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }

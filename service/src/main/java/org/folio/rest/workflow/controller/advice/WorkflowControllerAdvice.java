@@ -1,5 +1,6 @@
 package org.folio.rest.workflow.controller.advice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.folio.rest.workflow.exception.WorkflowAlreadyActiveException;
 import org.folio.rest.workflow.exception.WorkflowCreateAlreadyExistsException;
@@ -15,6 +16,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class WorkflowControllerAdvice extends AbstractAdvice {
+
+  ObjectMapper objectMapper;
+
+  public WorkflowControllerAdvice() {
+    this.objectMapper = new ObjectMapper();
+  }
+
+  @Override
+  protected ObjectMapper getObjectMapper() {
+    return objectMapper;
+  }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(EntityNotFoundException.class)

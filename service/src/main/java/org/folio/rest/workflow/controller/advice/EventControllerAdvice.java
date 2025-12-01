@@ -1,4 +1,5 @@
 package org.folio.rest.workflow.controller.advice;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.FileSystemException;
 import org.folio.rest.workflow.exception.EventPublishException;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class EventControllerAdvice extends AbstractAdvice {
+
+  ObjectMapper objectMapper;
+
+  public EventControllerAdvice() {
+    this.objectMapper = new ObjectMapper();
+  }
+
+  @Override
+  protected ObjectMapper getObjectMapper() {
+    return objectMapper;
+  }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(EventPublishException.class)
