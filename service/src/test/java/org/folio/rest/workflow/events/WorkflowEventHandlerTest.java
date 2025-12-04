@@ -40,7 +40,7 @@ class WorkflowEventHandlerTest {
     when(workflowRepo.existsByIdAndVersionTag(anyString(), anyString())).thenReturn(false);
 
     Assertions.assertDoesNotThrow(() -> {
-      workflowEventHandler.handleWorkflowCreate(workflow);
+      workflowEventHandler.handleWorkflowBeforeCreate(workflow);
     });
   }
 
@@ -49,7 +49,7 @@ class WorkflowEventHandlerTest {
     when(workflowRepo.existsByIdAndVersionTag(anyString(), anyString())).thenReturn(true);
 
     Assertions.assertThrows(WorkflowCreateAlreadyExistsException.class, () -> {
-      workflowEventHandler.handleWorkflowCreate(workflow);
+      workflowEventHandler.handleWorkflowBeforeCreate(workflow);
     });
   }
 

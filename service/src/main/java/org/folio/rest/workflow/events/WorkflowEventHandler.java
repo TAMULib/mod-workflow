@@ -7,14 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 
-@RepositoryEventHandler(Workflow.class)
+@RepositoryEventHandler
 public class WorkflowEventHandler {
 
   @Autowired
   private WorkflowRepo workflowRepo;
 
   @HandleBeforeCreate
-  public void handleWorkflowCreate(Workflow workflow) throws WorkflowCreateAlreadyExistsException {
+  public void handleWorkflowBeforeCreate(Workflow workflow) throws WorkflowCreateAlreadyExistsException {
     if (workflowRepo.existsByIdAndVersionTag(workflow.getId(), workflow.getVersionTag())) {
       throw new WorkflowCreateAlreadyExistsException(workflow.getId(), workflow.getVersionTag());
     }
