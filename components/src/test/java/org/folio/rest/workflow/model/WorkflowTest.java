@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,10 +21,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 @ExtendWith(MockitoExtension.class)
 class WorkflowTest {
+
+  /**
+   * Provide a version string for the default version.
+   */
+  public static final String VERSION = "1.0";
 
   @Mock
   private Setup setup;
@@ -214,27 +217,27 @@ class WorkflowTest {
     return Stream.of(
       Arguments.of(
         helperFieldMap(null,  null,      null,  null,         null,      null),
-        helperFieldMap(false, 0,         "",    emptyContext, emptyList, "")
+        helperFieldMap(false, 0,         "",    emptyContext, emptyList, VERSION)
       ),
       Arguments.of(
         helperFieldMap(true,  null,      null,  null,         null,      null),
-        helperFieldMap(true,  0,         "",    emptyContext, emptyList, "")
+        helperFieldMap(true,  0,         "",    emptyContext, emptyList, VERSION)
       ),
       Arguments.of(
         helperFieldMap(null,  INT_VALUE, null,  null,         null,      null),
-        helperFieldMap(false, INT_VALUE, "",    emptyContext, emptyList, "")
+        helperFieldMap(false, INT_VALUE, "",    emptyContext, emptyList, VERSION)
       ),
       Arguments.of(
         helperFieldMap(null,  null,      VALUE, null,         null,      null),
-        helperFieldMap(false, 0,         VALUE, emptyContext, emptyList, "")
+        helperFieldMap(false, 0,         VALUE, emptyContext, emptyList, VERSION)
       ),
       Arguments.of(
         helperFieldMap(true,  null,      null,  context,      null,      null),
-        helperFieldMap(true,  0,         "",    context,      emptyList, "")
+        helperFieldMap(true,  0,         "",    context,      emptyList, VERSION)
       ),
       Arguments.of(
         helperFieldMap(null,  null,      null,  null,         nodeList,  null),
-        helperFieldMap(false, 0,         "",    emptyContext, nodeList,  "")
+        helperFieldMap(false, 0,         "",    emptyContext, nodeList,  VERSION)
       ),
       Arguments.of(
         helperFieldMap(null,  null,      null,  null,         null,      VALUE),
