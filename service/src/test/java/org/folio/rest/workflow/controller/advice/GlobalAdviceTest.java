@@ -1,9 +1,8 @@
-package org.folio.rest.workflow.exception.handler;
+package org.folio.rest.workflow.controller.advice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.folio.spring.web.model.response.ResponseErrors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,24 +13,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
 
 @ExtendWith(MockitoExtension.class)
-class GlobalExceptionHandlerTest {
+class GlobalAdviceTest {
 
   private static final RuntimeException runtimeException = new RuntimeException("A runtime failure.");
 
   @Mock
   private TransactionSystemException transactionSystemException;
 
-  private GlobalExceptionHandler globalExceptionHandler;
+  private GlobalAdvice globalAdvice;
 
   @BeforeEach
   void beforeEach() {
-    globalExceptionHandler = new GlobalExceptionHandler();
+    globalAdvice = new GlobalAdvice();
   }
 
   @Test
-  void handleConstraintViolationWorksTest() throws Exception {
+  void handleConstraintViolationWorksTest() {
     when(transactionSystemException.getRootCause()).thenReturn(runtimeException);
-    ResponseEntity<ResponseErrors> response = globalExceptionHandler.handleConstraintViolation(transactionSystemException);
+    ResponseEntity<String> response = globalAdvice.handleConstraintViolation(transactionSystemException);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
