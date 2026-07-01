@@ -18,6 +18,8 @@
 
   <properties>
     <openapi.server.port>9000</openapi.server.port>
+
+    <folio-module-descriptor-validator.version>1.0.1</folio-module-descriptor-validator.version>
     <folio-spring.version>8.3.0-SNAPSHOT</folio-spring.version>
   </properties>
 
@@ -105,8 +107,29 @@
     </dependency>
   </dependencies>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>folio-nexus</id>
+      <name>FOLIO Maven repository</name>
+      <url>https://repository.folio.org/repository/maven-folio</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.folio</groupId>
+        <artifactId>folio-module-descriptor-validator</artifactId>
+        <version>${folio-module-descriptor-validator.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>validate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
