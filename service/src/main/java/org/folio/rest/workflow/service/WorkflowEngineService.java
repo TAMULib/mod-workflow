@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.ZonedDateTime;
 import java.util.Iterator;
 import lombok.extern.slf4j.Slf4j;
 import org.folio.rest.workflow.dto.WorkflowDto;
@@ -252,6 +253,7 @@ public class WorkflowEngineService {
 
         if (responseWorkflow != null) {
           String deploymentId = responseWorkflow.getDeploymentId();
+          responseWorkflow.setUpdatedOn(ZonedDateTime.now());
           log.info("Workflow is active = {}, deploymentID = {}", Boolean.TRUE.equals(responseWorkflow.getActive()), deploymentId);
           return workflowRepo.save(responseWorkflow);
         }
