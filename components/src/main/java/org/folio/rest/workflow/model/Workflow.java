@@ -19,7 +19,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   @NotNull
   @Temporal(TemporalType.TIMESTAMP)
   @Column(columnDefinition="TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()")
-  private ZonedDateTime createdOn;
+  private Instant createdOn;
 
   @Getter
   @Setter
@@ -113,7 +113,7 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   @NotNull
   @Temporal(TemporalType.TIMESTAMP)
   @Column(columnDefinition="TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()")
-  private ZonedDateTime updatedOn;
+  private Instant updatedOn;
 
   @Version
   @Getter
@@ -128,12 +128,12 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
 
     active = false;
     checksum = null;
-    createdOn = ZonedDateTime.now();
+    createdOn = Instant.now();
     name = "";
     historyTimeToLive = 0;
     initialContext = new HashMap<>();
     nodes = new ArrayList<>();
-    updatedOn = ZonedDateTime.now();
+    updatedOn = Instant.now();
     versionTag = "1.0";
   }
 
@@ -144,7 +144,7 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
     }
 
     if (createdOn == null) {
-      createdOn = ZonedDateTime.now();
+      createdOn = Instant.now();
     }
 
     if (historyTimeToLive == null) {
@@ -164,7 +164,7 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
     }
 
     if (updatedOn == null) {
-      updatedOn = ZonedDateTime.now();
+      updatedOn = Instant.now();
     }
 
     if (versionTag == null) {

@@ -1,13 +1,13 @@
 package org.folio.rest.workflow.model.has;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 /**
  * This interface provides the UpdatedOn methods.
  */
 public interface HasUpdatedOn {
 
-  public ZonedDateTime getUpdatedOn();
+  public Instant getUpdatedOn();
 
-  public void setUpdatedOn(ZonedDateTime updatedOn);
+  public void setUpdatedOn(Instant updatedOn);
 }

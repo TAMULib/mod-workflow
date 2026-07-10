@@ -1,13 +1,13 @@
 package org.folio.rest.workflow.model.has;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 /**
  * This interface provides the CreatedOn methods.
  */
 public interface HasCreatedOn {
 
-  public ZonedDateTime getCreatedOn();
+  public Instant getCreatedOn();
 
-  public void setCreatedOn(ZonedDateTime createdOn);
+  public void setCreatedOn(Instant createdOn);
 }
