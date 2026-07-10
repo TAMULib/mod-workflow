@@ -253,8 +253,12 @@ public class WorkflowEngineService {
 
         if (responseWorkflow != null) {
           String deploymentId = responseWorkflow.getDeploymentId();
+          Boolean active = responseWorkflow.getActive();
+
+          responseWorkflow.setChecksum(workflow.getChecksum());
+          responseWorkflow.setCreatedOn(workflow.getCreatedOn());
           responseWorkflow.setUpdatedOn(ZonedDateTime.now());
-          log.info("Workflow is active = {}, deploymentID = {}", Boolean.TRUE.equals(responseWorkflow.getActive()), deploymentId);
+          log.info("Workflow is active = {}, deploymentID = {}", Boolean.TRUE.equals(active), deploymentId);
           return workflowRepo.save(responseWorkflow);
         }
       }
