@@ -43,11 +43,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.folio.rest.workflow.exception.WorkflowNotFoundException;
@@ -179,6 +181,10 @@ class WorkflowControllerTest {
   @BeforeEach
   void beforeEach() {
     mvc = MockMvcBuilders.standaloneSetup(workflowController).build();
+
+    // Prevent problems where the object mapper randomly switches time zone thereby causing string comparisons to fail.
+    mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+    mapper.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
 
   @ParameterizedTest
@@ -199,7 +205,10 @@ class WorkflowControllerTest {
       String workflowJson = mapper.writeValueAsString(workflow);
 
       assertTrue(mediaType.isCompatibleWith(responseType));
-      assertEquals(workflowJson, result.getResponse().getContentAsString());
+
+      Workflow responseWorkflow = mapper.readValue(result.getResponse().getContentAsString(), Workflow.class);
+
+      assertEquals(workflowJson, mapper.writeValueAsString(responseWorkflow));
     }
   }
 
@@ -228,7 +237,10 @@ class WorkflowControllerTest {
       String workflowJson = mapper.writeValueAsString(workflow);
 
       assertTrue(mediaType.isCompatibleWith(responseType));
-      assertEquals(workflowJson, result.getResponse().getContentAsString());
+
+      Workflow responseWorkflow = mapper.readValue(result.getResponse().getContentAsString(), Workflow.class);
+
+      assertEquals(workflowJson, mapper.writeValueAsString(responseWorkflow));
     }
   }
 
@@ -402,7 +414,10 @@ class WorkflowControllerTest {
       String workflowJson = mapper.writeValueAsString(workflow);
 
       assertTrue(mediaType.isCompatibleWith(responseType));
-      assertEquals(workflowJson, result.getResponse().getContentAsString());
+
+      Workflow responseWorkflow = mapper.readValue(result.getResponse().getContentAsString(), Workflow.class);
+
+      assertEquals(workflowJson, mapper.writeValueAsString(responseWorkflow));
     }
   }
 
