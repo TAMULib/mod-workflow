@@ -1,10 +1,13 @@
 package org.folio.rest.workflow.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.Instant;
 import java.util.Iterator;
+import java.util.TimeZone;
 import lombok.extern.slf4j.Slf4j;
 import org.folio.rest.workflow.dto.WorkflowDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalDto;
@@ -12,7 +15,6 @@ import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowNotFoundException;
 import org.folio.rest.workflow.model.Workflow;
 import org.folio.rest.workflow.model.repo.WorkflowRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -51,16 +53,20 @@ public class WorkflowEngineService {
   @Value("${okapi.camunda.rest-path:/camunda}")
   private String restPath;
 
-  @Autowired
   private WorkflowRepo workflowRepo;
 
-  @Autowired
   private ObjectMapper mapper;
 
   private RestTemplate restTemplate;
 
-  public WorkflowEngineService(RestTemplateBuilder restTemplateBuilder) {
+  public WorkflowEngineService(WorkflowRepo workflowRepo, ObjectMapper mapper, RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder.build();
+    this.mapper = mapper;
+    this.workflowRepo = workflowRepo;
+
+    mapper.findAndRegisterModules();
+    mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+    mapper.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
 
   public Workflow activate(String workflowId, String tenant, String token)
@@ -252,7 +258,12 @@ public class WorkflowEngineService {
 
         if (responseWorkflow != null) {
           String deploymentId = responseWorkflow.getDeploymentId();
-          log.info("Workflow is active = {}, deploymentID = {}", Boolean.TRUE.equals(responseWorkflow.getActive()), deploymentId);
+          Boolean active = responseWorkflow.getActive();
+
+          responseWorkflow.setChecksum(workflow.getChecksum());
+          responseWorkflow.setCreatedOn(workflow.getCreatedOn());
+          responseWorkflow.setUpdatedOn(Instant.now());
+          log.info("Workflow is active = {}, deploymentID = {}", Boolean.TRUE.equals(active), deploymentId);
           return workflowRepo.save(responseWorkflow);
         }
       }

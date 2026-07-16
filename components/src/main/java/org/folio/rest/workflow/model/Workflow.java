@@ -2,6 +2,7 @@ package org.folio.rest.workflow.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -13,9 +14,12 @@ import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +27,14 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.folio.rest.workflow.model.converter.JsonNodeConverter;
+import org.folio.rest.workflow.model.has.HasChecksum;
+import org.folio.rest.workflow.model.has.HasCreatedOn;
 import org.folio.rest.workflow.model.has.HasDeploymentId;
 import org.folio.rest.workflow.model.has.HasId;
 import org.folio.rest.workflow.model.has.HasInformational;
 import org.folio.rest.workflow.model.has.HasName;
 import org.folio.rest.workflow.model.has.HasNodes;
+import org.folio.rest.workflow.model.has.HasUpdatedOn;
 import org.folio.rest.workflow.model.has.HasVersionTag;
 import org.folio.rest.workflow.model.has.common.HasWorkflowCommon;
 import org.folio.spring.domain.model.AbstractBaseEntity;
@@ -36,13 +43,26 @@ import org.springframework.data.annotation.Version;
 
 @Entity
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Workflow extends AbstractBaseEntity implements HasDeploymentId, HasId, HasInformational, HasName, HasNodes, HasVersionTag, HasWorkflowCommon {
+public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCreatedOn, HasDeploymentId, HasId, HasInformational, HasName, HasNodes, HasUpdatedOn, HasVersionTag, HasWorkflowCommon {
 
   @Getter
   @Setter
   @Column(nullable = true)
   @ColumnDefault("false")
   private Boolean active;
+
+  @Getter
+  @Setter
+  @Nullable
+  @Column
+  private String checksum;
+
+  @Getter
+  @Setter
+  @NotNull
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(columnDefinition="TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()")
+  private Instant createdOn;
 
   @Getter
   @Setter
@@ -88,6 +108,13 @@ public class Workflow extends AbstractBaseEntity implements HasDeploymentId, Has
   @Embedded
   private Setup setup;
 
+  @Getter
+  @Setter
+  @NotNull
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(columnDefinition="TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()")
+  private Instant updatedOn;
+
   @Version
   @Getter
   @Setter
@@ -100,10 +127,13 @@ public class Workflow extends AbstractBaseEntity implements HasDeploymentId, Has
     super();
 
     active = false;
+    checksum = null;
+    createdOn = Instant.now();
     name = "";
     historyTimeToLive = 0;
     initialContext = new HashMap<>();
     nodes = new ArrayList<>();
+    updatedOn = Instant.now();
     versionTag = "1.0";
   }
 
@@ -111,6 +141,10 @@ public class Workflow extends AbstractBaseEntity implements HasDeploymentId, Has
   public void prePersist() {
     if (active == null) {
       active = false;
+    }
+
+    if (createdOn == null) {
+      createdOn = Instant.now();
     }
 
     if (historyTimeToLive == null) {
@@ -127,6 +161,10 @@ public class Workflow extends AbstractBaseEntity implements HasDeploymentId, Has
 
     if (nodes == null) {
       nodes = new ArrayList<>();
+    }
+
+    if (updatedOn == null) {
+      updatedOn = Instant.now();
     }
 
     if (versionTag == null) {
