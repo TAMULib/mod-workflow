@@ -10,4 +10,8 @@ public class WorkflowNotFoundException extends Exception {
     super(String.format(WORKFLOW_NOT_FOUND_MESSAGE, id));
   }
 
+  public WorkflowNotFoundException(String id, Exception e) {
+    super(String.format(WORKFLOW_NOT_FOUND_MESSAGE, id), e);
+  }
+
 }
