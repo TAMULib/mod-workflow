@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.folio.rest.workflow.exception.WorkflowAlreadyActiveException;
 import org.folio.rest.workflow.exception.WorkflowCreateAlreadyExistsException;
 import org.folio.rest.workflow.exception.WorkflowDeploymentException;
+import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowImportException;
 import org.folio.rest.workflow.exception.WorkflowNotFoundException;
@@ -48,7 +49,7 @@ public class WorkflowControllerAdvice extends AbstractAdvice {
 
   @ResponseStatus(HttpStatus.FORBIDDEN)
   @ExceptionHandler(WorkflowAlreadyActiveException.class)
-  public ResponseEntity<String> handleWorkflowAlreadyActivrException(WorkflowAlreadyActiveException exception) {
+  public ResponseEntity<String> handleWorkflowAlreadyActiveException(WorkflowAlreadyActiveException exception) {
     return buildError(exception, HttpStatus.FORBIDDEN);
   }
 
@@ -56,6 +57,12 @@ public class WorkflowControllerAdvice extends AbstractAdvice {
   @ExceptionHandler(WorkflowDeploymentException.class)
   public ResponseEntity<String> handleWorkflowDeploymentException(WorkflowDeploymentException exception) {
     return buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(WorkflowDeploymentNotFound.class)
+  public ResponseEntity<String> handleWorkflowDeploymentNotFound(WorkflowDeploymentNotFound exception) {
+    return buildError(exception, HttpStatus.NOT_FOUND);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -66,7 +73,7 @@ public class WorkflowControllerAdvice extends AbstractAdvice {
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(WorkflowImportException.class)
-  public ResponseEntity<String> handleWorkflowImportExceptionException(WorkflowImportException exception) {
+  public ResponseEntity<String> handleWorkflowImportException(WorkflowImportException exception) {
     return buildError(exception, HttpStatus.BAD_REQUEST);
   }
 
