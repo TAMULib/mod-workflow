@@ -11,6 +11,15 @@ import org.springframework.http.HttpMethod;
 
 class RequestTest {
 
+  private static final String ACCEPT        = "accept";
+  private static final String BODYTEMPLATE  = "bodyTemplate";
+  private static final String CONTENTTYPE   = "contentType";
+  private static final String ITERABLE      = "iterable";
+  private static final String METHOD        = "method";
+  private static final String RESPONSEKEY   = "responseKey";
+  private static final String SENDEMPTYBODY = "sendEmptyBody";
+  private static final String URL           = "url";
+
   private Request request;
 
   @BeforeEach
@@ -20,109 +29,128 @@ class RequestTest {
 
   @Test
   void getUrlWorksTest() {
-    setField(request, "url", VALUE);
+    setField(request, URL, VALUE);
 
     assertEquals(VALUE, request.getUrl());
   }
 
   @Test
   void setUrlWorksTest() {
-    setField(request, "url", null);
+    setField(request, URL, null);
 
     request.setUrl(VALUE);
-    assertEquals(VALUE, getField(request, "url"));
+    assertEquals(VALUE, getField(request, URL));
   }
 
   @Test
   void getMethodWorksTest() {
-    setField(request, "method", HttpMethod.DELETE);
+    setField(request, METHOD, HttpMethod.DELETE);
 
     assertEquals(HttpMethod.DELETE, request.getMethod());
   }
 
   @Test
   void setMethodWorksTest() {
-    setField(request, "method", null);
+    setField(request, METHOD, null);
 
     request.setMethod(HttpMethod.DELETE);
-    assertEquals(HttpMethod.DELETE, getField(request, "method"));
+    assertEquals(HttpMethod.DELETE, getField(request, METHOD));
   }
 
   @Test
   void getContentTypeWorksTest() {
-    setField(request, "contentType", VALUE);
+    setField(request, CONTENTTYPE, VALUE);
 
     assertEquals(VALUE, request.getContentType());
   }
 
   @Test
   void setContentTypeWorksTest() {
-    setField(request, "contentType", null);
+    setField(request, CONTENTTYPE, null);
 
     request.setContentType(VALUE);
-    assertEquals(VALUE, getField(request, "contentType"));
+    assertEquals(VALUE, getField(request, CONTENTTYPE));
   }
 
   @Test
   void getAcceptWorksTest() {
-    setField(request, "accept", VALUE);
+    setField(request, ACCEPT, VALUE);
 
     assertEquals(VALUE, request.getAccept());
   }
 
   @Test
   void setAcceptWorksTest() {
-    setField(request, "accept", null);
+    setField(request, ACCEPT, null);
 
     request.setAccept(VALUE);
-    assertEquals(VALUE, getField(request, "accept"));
+    assertEquals(VALUE, getField(request, ACCEPT));
   }
 
   @Test
   void getBodyTemplateWorksTest() {
-    setField(request, "bodyTemplate", VALUE);
+    setField(request, BODYTEMPLATE, VALUE);
 
     assertEquals(VALUE, request.getBodyTemplate());
   }
 
   @Test
   void setBodyTemplateWorksTest() {
-    setField(request, "bodyTemplate", null);
+    setField(request, BODYTEMPLATE, null);
 
     request.setBodyTemplate(VALUE);
-    assertEquals(VALUE, getField(request, "bodyTemplate"));
+    assertEquals(VALUE, getField(request, BODYTEMPLATE));
   }
 
   @Test
   void getIterableWorksTest() {
-    setField(request, "iterable", true);
+    setField(request, ITERABLE, true);
 
     assertEquals(true, request.isIterable());
   }
 
   @Test
   void setIterableWorksTest() {
-    setField(request, "iterable", false);
+    setField(request, ITERABLE, false);
 
     request.setIterable(true);
-    assertEquals(true, getField(request, "iterable"));
+    assertEquals(true, getField(request, ITERABLE));
   }
 
   @Test
   void getResponseKeyWorksTest() {
-    setField(request, "responseKey", VALUE);
+    setField(request, RESPONSEKEY, VALUE);
 
     assertEquals(VALUE, request.getResponseKey());
   }
 
   @Test
   void setResponseKeyWorksTest() {
-    setField(request, "responseKey", null);
+    setField(request, RESPONSEKEY, null);
 
     request.setResponseKey(VALUE);
-    assertEquals(VALUE, getField(request, "responseKey"));
+    assertEquals(VALUE, getField(request, RESPONSEKEY));
   }
 
-  private static class Impl extends Request { };
+  @Test
+  void getSendEmptyBodyWorksTest() {
+    final boolean value = false;
+
+    setField(request, SENDEMPTYBODY, value);
+
+    assertEquals(value, request.getSendEmptyBody());
+  }
+
+  @Test
+  void setSendEmptyBodyWorksTest() {
+    final boolean value = true;
+
+    setField(request, SENDEMPTYBODY, null);
+
+    request.setSendEmptyBody(value);
+    assertEquals(value, getField(request, SENDEMPTYBODY));
+  }
+
+  private static class Impl extends Request { }
 
 }
