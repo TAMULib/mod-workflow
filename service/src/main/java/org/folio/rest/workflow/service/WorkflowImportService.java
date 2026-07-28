@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.jknack.handlebars.internal.Files;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -79,6 +80,8 @@ public class WorkflowImportService {
     this.nodeRepo = nodeRepo;
     this.triggerRepo = triggerRepo;
     this.workflowRepo = workflowRepo;
+
+    this.objectMapper.registerModule(new JavaTimeModule());
   }
 
   /**

@@ -5,12 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.StreamReadFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.compressors.CompressorException;
 import org.folio.rest.workflow.exception.WorkflowImportAlreadyImported;
 import org.folio.rest.workflow.exception.WorkflowImportException;
 import org.folio.rest.workflow.exception.WorkflowImportInvalidOrMissingProperty;
@@ -22,7 +26,6 @@ import org.folio.rest.workflow.model.repo.WorkflowRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,8 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @ExtendWith(MockitoExtension.class)
@@ -41,20 +42,14 @@ class WorkflowImportServiceTest {
 
   private static final String WORKFLOW_UUID = "7dcd302f-a438-4ca5-a7eb-21653610d46f";
 
-  @InjectMocks
-  private WorkflowImportService workflowImportService;
-
-  @MockitoBean
+  @Mock
   private NodeRepo nodeRepo;
 
-  @MockitoBean
+  @Mock
   private TriggerRepo triggerRepo;
 
-  @MockitoBean
+  @Mock
   private WorkflowRepo workflowRepo;
-
-  @MockitoSpyBean
-  private ObjectMapper objectMapper;
 
   @Mock
   private Page<Workflow> page;
@@ -140,14 +135,29 @@ class WorkflowImportServiceTest {
   @Value("classpath:fwz/unit_test_zip.fwz")
   private Resource fwzZipResource;
 
+  private JsonMapper mapper;
+
   private Workflow workflow;
+
+  private WorkflowImportService workflowImportService;
 
   @BeforeEach
   void beforeEach() {
+    mapper = JsonMapper.builder()
+      .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+      .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+      .disable(MapperFeature.REQUIRE_TYPE_ID_FOR_SUBTYPES)
+      .disable(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY)
+      .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+      .addModule(new JavaTimeModule())
+      .build();
+
     workflow = new Workflow();
     workflow.setId(WORKFLOW_UUID);
 
-    when(workflowRepo.save(any())).thenReturn(workflow);
+    workflowImportService = new WorkflowImportService(mapper, nodeRepo, triggerRepo, workflowRepo);
+
+    lenient().when(workflowRepo.save(any())).thenReturn(workflow);
   }
 
   @Test
@@ -252,91 +262,91 @@ class WorkflowImportServiceTest {
   }
 
   @Test
-  void importFileWorksForBzip2Test() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForBzip2Test() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzBzip2Resource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForBzip2AsBz2Test() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForBzip2AsBz2Test() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzBzip2AsBz2Resource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipAsGzTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipAsGzTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipAsGzResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipWithBadVersionTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipWithBadVersionTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipBadVersionResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipWithJavaTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipWithJavaTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipJavaResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipWithOddFilesTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipWithOddFilesTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipOddFilesResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipWithPythonTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipWithPythonTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipPythonResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipWithRubyTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipWithRubyTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipRubyResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipWithMissingVersionTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipWithMissingVersionTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipMisVersionResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForGzipWithUnknownVersionTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForGzipWithUnknownVersionTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzGzipUnVerResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForZipTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForZipTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzZipResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());
   }
 
   @Test
-  void importFileWorksForZipAsZipTest() throws IOException, CompressorException, ArchiveException, WorkflowImportException {
+  void importFileWorksForZipAsZipTest() throws IOException, WorkflowImportException {
     Workflow imported = workflowImportService.importFile(fwzZipAsZipResource);
     assertNotNull(imported);
     assertEquals(workflow.getId(), imported.getId());

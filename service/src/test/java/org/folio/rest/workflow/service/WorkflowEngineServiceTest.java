@@ -19,11 +19,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import com.fasterxml.jackson.core.StreamReadFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.folio.rest.workflow.dto.WorkflowDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalDto;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
@@ -73,7 +78,15 @@ class WorkflowEngineServiceTest {
 
   @BeforeEach
   void beforeEach() {
-    mapper = new JsonMapper();
+    mapper = JsonMapper.builder()
+      .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+      .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+      .disable(MapperFeature.REQUIRE_TYPE_ID_FOR_SUBTYPES)
+      .disable(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY)
+      .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+      .addModule(new JavaTimeModule())
+      .build();
+
     workflowEngineService = new WorkflowEngineService(workflowRepo, mapper, new RestTemplateBuilder());
 
     workflow = new WorkflowAsDto();
