@@ -11,6 +11,11 @@ import lombok.Setter;
 import org.folio.rest.workflow.model.components.DelegateTask;
 import org.folio.rest.workflow.model.has.common.HasRequestTaskCommon;
 
+/**
+ * A task for regular HTTP requests.
+ *
+ * For FOLIO related requests other than logging, use the FolioRequestDelegate instead.
+ */
 @Entity
 public class RequestTask extends AbstractTask implements DelegateTask, HasRequestTaskCommon {
 

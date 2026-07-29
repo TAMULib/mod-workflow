@@ -19,6 +19,7 @@ import org.folio.rest.workflow.model.EndEvent;
 import org.folio.rest.workflow.model.EventSubprocess;
 import org.folio.rest.workflow.model.ExclusiveGateway;
 import org.folio.rest.workflow.model.FileTask;
+import org.folio.rest.workflow.model.FolioRequestTask;
 import org.folio.rest.workflow.model.FtpTask;
 import org.folio.rest.workflow.model.InclusiveGateway;
 import org.folio.rest.workflow.model.InputTask;
@@ -56,6 +57,7 @@ public class DeserializeAsNodeJsonResolver extends TypeIdResolverBase {
     entry("EventSubprocess", EventSubprocess.class),
     entry("ExclusiveGateway", ExclusiveGateway.class),
     entry("FileTask", FileTask.class),
+    entry("FolioRequestTask", FolioRequestTask.class),
     entry("FtpTask", FtpTask.class),
     entry("InclusiveGateway", InclusiveGateway.class),
     entry("InputTask", InputTask.class),
