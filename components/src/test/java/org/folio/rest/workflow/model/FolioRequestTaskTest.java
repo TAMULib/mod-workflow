@@ -4,6 +4,7 @@ import static org.folio.spring.test.mock.MockMvcConstant.VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
@@ -21,7 +22,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -263,7 +263,7 @@ class FolioRequestTaskTest {
    */
   private static Stream<Arguments> providePrePersistFor() {
 
-    final EmbeddedVariable variable = Mockito.spy(new EmbeddedVariable());
+    final EmbeddedVariable variable = spy(new EmbeddedVariable());
     final EmbeddedVariable nullValue = null;
     final Set<EmbeddedVariable> headerOutputVariables = Set.of(variable);
     final Set<EmbeddedVariable> headerOutputVariablesEmpty = Set.of();
