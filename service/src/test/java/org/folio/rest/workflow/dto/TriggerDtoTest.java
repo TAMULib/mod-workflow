@@ -94,6 +94,6 @@ class TriggerDtoTest {
     assertEquals(VALUE, getField(triggerDto, "pathPattern"));
   }
 
-  private static class Impl extends Trigger implements TriggerDto { };
+  private static class Impl extends Trigger implements TriggerDto { }
 
 }

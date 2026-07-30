@@ -42,6 +42,11 @@ public class Subprocess extends AbstractProcess implements Branch, MultiInstance
     if (type == null) {
       type = SubprocessType.EMBEDDED;
     }
+
+    // @Embeddable with @PrePersist do not consistently call PrePersist and so this must be manually triggered.
+    if (loopRef != null) {
+      loopRef.prePersist();
+    }
   }
 
 }

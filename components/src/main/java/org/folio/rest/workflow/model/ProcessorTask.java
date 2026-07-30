@@ -17,6 +17,11 @@ public class ProcessorTask extends AbstractTask implements DelegateTask, HasProc
 
   public ProcessorTask() {
     super();
+
+    // @Embeddable with @PrePersist do not consistently call PrePersist and so this must be manually triggered.
+    if (processor != null) {
+      processor.prePersist();
+    }
   }
 
 }

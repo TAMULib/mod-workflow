@@ -77,6 +77,6 @@ class EndEventTest {
     assertEquals(VALUE, getField(endEvent, "deserializeAs"));
   }
 
-  private static class Impl extends EndEvent { };
+  private static class Impl extends EndEvent { }
 
 }
