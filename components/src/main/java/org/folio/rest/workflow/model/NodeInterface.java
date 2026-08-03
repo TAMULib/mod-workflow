@@ -20,6 +20,7 @@ import org.folio.rest.workflow.model.resolver.DeserializeAsNodeJsonResolver;
   @JsonSubTypes.Type(value = EventSubprocess.class, name = "EventSubprocess"),
   @JsonSubTypes.Type(value = ExclusiveGateway.class, name = "ExclusiveGateway"),
   @JsonSubTypes.Type(value = FileTask.class, name = "FileTask"),
+  @JsonSubTypes.Type(value = FolioRequestTask.class, name = "FolioRequestTask"),
   @JsonSubTypes.Type(value = FtpTask.class, name = "FtpTask"),
   @JsonSubTypes.Type(value = InclusiveGateway.class, name = "InclusiveGateway"),
   @JsonSubTypes.Type(value = InputTask.class, name = "InputTask"),
