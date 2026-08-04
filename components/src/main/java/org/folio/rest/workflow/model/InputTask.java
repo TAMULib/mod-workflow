@@ -29,6 +29,11 @@ public class InputTask extends AbstractTask {
 
     if (inputs == null) {
       inputs = new HashSet<>();
+    } else {
+      // @Embeddable with @PrePersist do not consistently call PrePersist and so this must be manually triggered.
+      inputs.forEach((EmbeddedInput ei) -> {
+        if (ei != null) ei.prePersist();
+      });
     }
   }
 

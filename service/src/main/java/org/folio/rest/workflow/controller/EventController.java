@@ -108,9 +108,7 @@ public class EventController {
       .stream()
       .filter(name -> !name.equals("file"))
       .filter(name -> !name.equals("path"))
-      .forEach(name -> {
-        body.put(name, request.getParameter(name));
-      });
+      .forEach(name -> body.put(name, request.getParameter(name)));
 
     try (InputStream is = multipartFile.getInputStream()) {
       Files.copy(is, filePath, StandardCopyOption.REPLACE_EXISTING);

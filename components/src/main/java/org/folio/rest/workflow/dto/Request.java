@@ -30,12 +30,17 @@ public class Request {
 
   private String responseKey;
 
+  @NotNull
+  private Boolean sendEmptyBody;
+
   public Request() {
     super();
-    contentType = MediaType.APPLICATION_JSON_VALUE;
+
     accept = MediaType.APPLICATION_JSON_VALUE;
-    bodyTemplate = "{}";
+    contentType = MediaType.APPLICATION_JSON_VALUE;
+    bodyTemplate = null;
     iterable = false;
+    sendEmptyBody = true;
   }
 
 }

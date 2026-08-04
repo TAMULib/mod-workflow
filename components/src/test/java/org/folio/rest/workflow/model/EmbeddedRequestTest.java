@@ -12,9 +12,9 @@ import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-
 import org.folio.rest.workflow.enums.HttpMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,16 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class EmbeddedRequestTest {
+
+  private static final String ACCEPT        = "accept";
+  private static final String BODYTEMPLATE  = "bodyTemplate";
+  private static final String CONTENTTYPE   = "contentType";
+  private static final String ITERABLE      = "iterable";
+  private static final String ITERABLEKEY   = "iterableKey";
+  private static final String METHOD        = "method";
+  private static final String RESPONSEKEY   = "responseKey";
+  private static final String SENDEMPTYBODY = "sendEmptyBody";
+  private static final String URL           = "url";
 
   private EmbeddedRequest embeddedRequest;
 
@@ -33,107 +43,141 @@ class EmbeddedRequestTest {
 
   @Test
   void getUrlWorksTest() {
-    setField(embeddedRequest, "url", VALUE);
+    setField(embeddedRequest, URL, VALUE);
 
     assertEquals(VALUE, embeddedRequest.getUrl());
   }
 
   @Test
   void setUrlWorksTest() {
-    setField(embeddedRequest, "url", null);
+    setField(embeddedRequest, URL, null);
 
     embeddedRequest.setUrl(VALUE);
-    assertEquals(VALUE, getField(embeddedRequest, "url"));
+    assertEquals(VALUE, getField(embeddedRequest, URL));
   }
 
   @Test
   void getMethodWorksTest() {
-    setField(embeddedRequest, "method", DELETE);
+    setField(embeddedRequest, METHOD, DELETE);
 
     assertEquals(DELETE, embeddedRequest.getMethod());
   }
 
   @Test
   void setMethodWorksTest() {
-    setField(embeddedRequest, "method", null);
+    setField(embeddedRequest, METHOD, null);
 
     embeddedRequest.setMethod(DELETE);
-    assertEquals(DELETE, getField(embeddedRequest, "method"));
+    assertEquals(DELETE, getField(embeddedRequest, METHOD));
   }
 
   @Test
   void getContentTypeWorksTest() {
-    setField(embeddedRequest, "contentType", VALUE);
+    setField(embeddedRequest, CONTENTTYPE, VALUE);
 
     assertEquals(VALUE, embeddedRequest.getContentType());
   }
 
   @Test
   void setContentTypeWorksTest() {
-    setField(embeddedRequest, "contentType", null);
+    setField(embeddedRequest, CONTENTTYPE, null);
 
     embeddedRequest.setContentType(VALUE);
-    assertEquals(VALUE, getField(embeddedRequest, "contentType"));
+    assertEquals(VALUE, getField(embeddedRequest, CONTENTTYPE));
   }
 
   @Test
   void getAcceptWorksTest() {
-    setField(embeddedRequest, "accept", VALUE);
+    setField(embeddedRequest, ACCEPT, VALUE);
 
     assertEquals(VALUE, embeddedRequest.getAccept());
   }
 
   @Test
   void setAcceptWorksTest() {
-    setField(embeddedRequest, "accept", null);
+    setField(embeddedRequest, ACCEPT, null);
 
     embeddedRequest.setAccept(VALUE);
-    assertEquals(VALUE, getField(embeddedRequest, "accept"));
+    assertEquals(VALUE, getField(embeddedRequest, ACCEPT));
   }
 
   @Test
   void getBodyTemplateWorksTest() {
-    setField(embeddedRequest, "bodyTemplate", VALUE);
+    setField(embeddedRequest, BODYTEMPLATE, VALUE);
 
     assertEquals(VALUE, embeddedRequest.getBodyTemplate());
   }
 
   @Test
   void setBodyTemplateWorksTest() {
-    setField(embeddedRequest, "bodyTemplate", null);
+    setField(embeddedRequest, BODYTEMPLATE, null);
 
     embeddedRequest.setBodyTemplate(VALUE);
-    assertEquals(VALUE, getField(embeddedRequest, "bodyTemplate"));
+    assertEquals(VALUE, getField(embeddedRequest, BODYTEMPLATE));
   }
 
   @Test
-  void getIterableWorksTest() {
-    setField(embeddedRequest, "iterable", true);
+  void isIterableWorksTest() {
+    setField(embeddedRequest, ITERABLE, true);
 
     assertEquals(true, embeddedRequest.isIterable());
   }
 
   @Test
   void setIterableWorksTest() {
-    setField(embeddedRequest, "iterable", false);
+    setField(embeddedRequest, ITERABLE, false);
 
     embeddedRequest.setIterable(true);
-    assertEquals(true, getField(embeddedRequest, "iterable"));
+    assertEquals(true, getField(embeddedRequest, ITERABLE));
+  }
+
+  @Test
+  void getIterableKeyWorksTest() {
+    setField(embeddedRequest, ITERABLEKEY, VALUE);
+
+    assertEquals(VALUE, embeddedRequest.getIterableKey());
+  }
+
+  @Test
+  void setIterableKeyWorksTest() {
+    setField(embeddedRequest, ITERABLEKEY, null);
+
+    embeddedRequest.setIterableKey(VALUE);
+    assertEquals(VALUE, getField(embeddedRequest, ITERABLEKEY));
   }
 
   @Test
   void getResponseKeyWorksTest() {
-    setField(embeddedRequest, "responseKey", VALUE);
+    setField(embeddedRequest, RESPONSEKEY, VALUE);
 
     assertEquals(VALUE, embeddedRequest.getResponseKey());
   }
 
   @Test
   void setResponseKeyWorksTest() {
-    setField(embeddedRequest, "responseKey", null);
+    setField(embeddedRequest, RESPONSEKEY, null);
 
     embeddedRequest.setResponseKey(VALUE);
-    assertEquals(VALUE, getField(embeddedRequest, "responseKey"));
+    assertEquals(VALUE, getField(embeddedRequest, RESPONSEKEY));
+  }
+
+  @Test
+  void getSendEmptyBodyWorksTest() {
+    final boolean value = false;
+
+    setField(embeddedRequest, SENDEMPTYBODY, value);
+
+    assertEquals(value, embeddedRequest.getSendEmptyBody());
+  }
+
+  @Test
+  void setSendEmptyBodyWorksTest() {
+    final boolean value = true;
+
+    setField(embeddedRequest, SENDEMPTYBODY, null);
+
+    embeddedRequest.setSendEmptyBody(value);
+    assertEquals(value, getField(embeddedRequest, SENDEMPTYBODY));
   }
 
   @ParameterizedTest
@@ -160,53 +204,59 @@ class EmbeddedRequestTest {
    */
   private static Stream<Arguments> providePrePersistFor() {
 
-    return Stream.of(
+    return List.of(
       Arguments.of(
-        helperFieldMap(NULL_STR, NULL_STR,    NULL_STR, null, NULL_STR),
-        helperFieldMap(APP_JSON, JSON_OBJECT, APP_JSON, GET,  "")
+        helperFieldMap(NULL_STR, NULL_STR,    NULL_STR, null, null,  NULL_STR),
+        helperFieldMap(APP_JSON, JSON_OBJECT, APP_JSON, GET,  true,  "")
       ),
       Arguments.of(
-        helperFieldMap(VALUE,    NULL_STR,    NULL_STR, null, NULL_STR),
-        helperFieldMap(VALUE,    JSON_OBJECT, APP_JSON, GET,  "")
+        helperFieldMap(VALUE,    NULL_STR,    NULL_STR, null, null,  NULL_STR),
+        helperFieldMap(VALUE,    JSON_OBJECT, APP_JSON, GET,  true,  "")
       ),
       Arguments.of(
-        helperFieldMap(NULL_STR, VALUE,       NULL_STR, null, NULL_STR),
-        helperFieldMap(APP_JSON, VALUE,       APP_JSON, GET,  "")
+        helperFieldMap(NULL_STR, VALUE,       NULL_STR, null, null,  NULL_STR),
+        helperFieldMap(APP_JSON, VALUE,       APP_JSON, GET,  true,  "")
       ),
       Arguments.of(
-        helperFieldMap(NULL_STR, NULL_STR,    VALUE,    null, NULL_STR),
-        helperFieldMap(APP_JSON, JSON_OBJECT, VALUE,    GET,  "")
+        helperFieldMap(NULL_STR, NULL_STR,    VALUE,    null, null,  NULL_STR),
+        helperFieldMap(APP_JSON, JSON_OBJECT, VALUE,    GET,  true,  "")
       ),
       Arguments.of(
-        helperFieldMap(NULL_STR, NULL_STR,    NULL_STR, POST, NULL_STR),
-        helperFieldMap(APP_JSON, JSON_OBJECT, APP_JSON, POST, "")
+        helperFieldMap(NULL_STR, NULL_STR,    NULL_STR, POST, null,  NULL_STR),
+        helperFieldMap(APP_JSON, JSON_OBJECT, APP_JSON, POST, true,  "")
       ),
       Arguments.of(
-        helperFieldMap(NULL_STR, NULL_STR,    NULL_STR, null, VALUE),
-        helperFieldMap(APP_JSON, JSON_OBJECT, APP_JSON, GET,  VALUE)
+        helperFieldMap(NULL_STR, NULL_STR,    NULL_STR, POST, false, NULL_STR),
+        helperFieldMap(APP_JSON, NULL_STR,    APP_JSON, POST, false, "")
+      ),
+      Arguments.of(
+        helperFieldMap(NULL_STR, NULL_STR,    NULL_STR, null, null,  VALUE),
+        helperFieldMap(APP_JSON, JSON_OBJECT, APP_JSON, GET,  true,  VALUE)
       )
-    );
+    ).stream();
   }
 
   /**
-   * Helper for reducing inline code repititon for assignments.
+   * Helper for reducing in line code repetition for assignments.
    *
-   * @param accept The accept value.
-   * @param bodyTemplate The bodyTemplate value.
-   * @param contentType The contentType value.
-   * @param method The method value.
-   * @param url The url value.
+   * @param accept        The accept value.
+   * @param bodyTemplate  The bodyTemplate value.
+   * @param contentType   The contentType value.
+   * @param method        The method value.
+   * @param sendEmptyBody The sendEmptyBody value.
+   * @param url           The url value.
    *
    * @return The built arguments map.
    */
-  private static Map<String, Object> helperFieldMap(String accept, String bodyTemplate, String contentType, HttpMethod method, String url) {
+  private static Map<String, Object> helperFieldMap(String accept, String bodyTemplate, String contentType, HttpMethod method, Boolean sendEmptyBody, String url) {
     final Map<String, Object> map = new HashMap<>();
 
-    map.put("accept", accept);
-    map.put("bodyTemplate", bodyTemplate);
-    map.put("contentType", contentType);
-    map.put("method", method);
-    map.put("url", url);
+    map.put(ACCEPT, accept);
+    map.put(BODYTEMPLATE, bodyTemplate);
+    map.put(CONTENTTYPE, contentType);
+    map.put(METHOD, method);
+    map.put(SENDEMPTYBODY, sendEmptyBody);
+    map.put(URL, url);
 
     return map;
   }

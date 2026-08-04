@@ -68,6 +68,16 @@ public abstract class AbstractTask extends Node implements HasInputOutput, Task 
 
     if (inputVariables == null) {
       inputVariables = new HashSet<>();
+    } else {
+      // @Embeddable with @PrePersist do not consistently call PrePersist and so this must be manually triggered.
+      inputVariables.forEach((EmbeddedVariable ev) -> {
+        if (ev != null) ev.prePersist();
+      });
+    }
+
+    // @Embeddable with @PrePersist do not consistently call PrePersist and so this must be manually triggered.
+    if (outputVariable != null) {
+      outputVariable.prePersist();
     }
   }
 

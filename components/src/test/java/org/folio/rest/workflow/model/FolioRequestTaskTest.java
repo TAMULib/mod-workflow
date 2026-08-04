@@ -4,6 +4,7 @@ import static org.folio.spring.test.mock.MockMvcConstant.VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
@@ -21,11 +22,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class RequestTaskTest {
+class FolioRequestTaskTest {
 
   private static final String ASYNCAFTER            = "asyncAfter";
   private static final String ASYNCBEFORE           = "asyncBefore";
@@ -46,163 +46,163 @@ class RequestTaskTest {
 
   private Set<EmbeddedVariable> inputVariables;
 
-  private RequestTask requestTask;
+  private FolioRequestTask task;
 
   @BeforeEach
   void beforeEach() {
-    requestTask = new RequestTask();
+    task = new FolioRequestTask();
     inputVariables = new HashSet<>();
     inputVariables.add(embeddedVariable);
   }
 
   @Test
   void getIdWorksTest() {
-    setField(requestTask, ID, VALUE);
+    setField(task, ID, VALUE);
 
-    assertEquals(VALUE, requestTask.getId());
+    assertEquals(VALUE, task.getId());
   }
 
   @Test
   void setIdWorksTest() {
-    setField(requestTask, ID, null);
+    setField(task, ID, null);
 
-    requestTask.setId(VALUE);
-    assertEquals(VALUE, getField(requestTask, ID));
+    task.setId(VALUE);
+    assertEquals(VALUE, getField(task, ID));
   }
 
   @Test
   void getNameWorksTest() {
-    setField(requestTask, NAME, VALUE);
+    setField(task, NAME, VALUE);
 
-    assertEquals(VALUE, requestTask.getName());
+    assertEquals(VALUE, task.getName());
   }
 
   @Test
   void setNameWorksTest() {
-    setField(requestTask, NAME, null);
+    setField(task, NAME, null);
 
-    requestTask.setName(VALUE);
-    assertEquals(VALUE, getField(requestTask, NAME));
+    task.setName(VALUE);
+    assertEquals(VALUE, getField(task, NAME));
   }
 
   @Test
   void getDescriptionWorksTest() {
-    setField(requestTask, DESCRIPTION, VALUE);
+    setField(task, DESCRIPTION, VALUE);
 
-    assertEquals(VALUE, requestTask.getDescription());
+    assertEquals(VALUE, task.getDescription());
   }
 
   @Test
   void setDescriptionWorksTest() {
-    setField(requestTask, DESCRIPTION, null);
+    setField(task, DESCRIPTION, null);
 
-    requestTask.setDescription(VALUE);
-    assertEquals(VALUE, getField(requestTask, DESCRIPTION));
+    task.setDescription(VALUE);
+    assertEquals(VALUE, getField(task, DESCRIPTION));
   }
 
   @Test
   void getDeserializeAsWorksTest() {
-    setField(requestTask, DESERIALIZEAS, VALUE);
+    setField(task, DESERIALIZEAS, VALUE);
 
-    assertEquals(VALUE, requestTask.getDeserializeAs());
+    assertEquals(VALUE, task.getDeserializeAs());
   }
 
   @Test
   void setDeserializeAsWorksTest() {
-    setField(requestTask, DESERIALIZEAS, null);
+    setField(task, DESERIALIZEAS, null);
 
-    requestTask.setDeserializeAs(VALUE);
-    assertEquals(VALUE, getField(requestTask, DESERIALIZEAS));
+    task.setDeserializeAs(VALUE);
+    assertEquals(VALUE, getField(task, DESERIALIZEAS));
   }
 
   @Test
   void getInputVariablesWorksTest() {
-    setField(requestTask, INPUTVARIABLES, inputVariables);
+    setField(task, INPUTVARIABLES, inputVariables);
 
-    assertEquals(inputVariables, requestTask.getInputVariables());
+    assertEquals(inputVariables, task.getInputVariables());
   }
 
   @Test
   void setInputVariablesWorksTest() {
-    setField(requestTask, INPUTVARIABLES, null);
+    setField(task, INPUTVARIABLES, null);
 
-    requestTask.setInputVariables(inputVariables);
-    assertEquals(inputVariables, getField(requestTask, INPUTVARIABLES));
+    task.setInputVariables(inputVariables);
+    assertEquals(inputVariables, getField(task, INPUTVARIABLES));
   }
 
   @Test
   void getOutputVariableWorksTest() {
-    setField(requestTask, OUTPUTVARIABLE, embeddedVariable);
+    setField(task, OUTPUTVARIABLE, embeddedVariable);
 
-    assertEquals(embeddedVariable, requestTask.getOutputVariable());
+    assertEquals(embeddedVariable, task.getOutputVariable());
   }
 
   @Test
   void setOutputVariableWorksTest() {
-    setField(requestTask, OUTPUTVARIABLE, null);
+    setField(task, OUTPUTVARIABLE, null);
 
-    requestTask.setOutputVariable(embeddedVariable);
-    assertEquals(embeddedVariable, getField(requestTask, OUTPUTVARIABLE));
+    task.setOutputVariable(embeddedVariable);
+    assertEquals(embeddedVariable, getField(task, OUTPUTVARIABLE));
   }
 
   @Test
   void getAsyncBeforeWorksTest() {
-    setField(requestTask, ASYNCBEFORE, true);
+    setField(task, ASYNCBEFORE, true);
 
-    assertEquals(true, requestTask.getAsyncBefore());
+    assertEquals(true, task.getAsyncBefore());
   }
 
   @Test
   void setAsyncBeforeWorksTest() {
-    setField(requestTask, ASYNCBEFORE, false);
+    setField(task, ASYNCBEFORE, false);
 
-    requestTask.setAsyncBefore(true);
-    assertEquals(true, getField(requestTask, ASYNCBEFORE));
+    task.setAsyncBefore(true);
+    assertEquals(true, getField(task, ASYNCBEFORE));
   }
 
   @Test
   void getAsyncAfterWorksTest() {
-    setField(requestTask, ASYNCAFTER, true);
+    setField(task, ASYNCAFTER, true);
 
-    assertEquals(true, requestTask.getAsyncAfter());
+    assertEquals(true, task.getAsyncAfter());
   }
 
   @Test
   void setAsyncAfterWorksTest() {
-    setField(requestTask, ASYNCAFTER, false);
+    setField(task, ASYNCAFTER, false);
 
-    requestTask.setAsyncAfter(true);
-    assertEquals(true, getField(requestTask, ASYNCAFTER));
+    task.setAsyncAfter(true);
+    assertEquals(true, getField(task, ASYNCAFTER));
   }
 
   @Test
   void getHeaderOutputVariablesWorksTest() {
-    setField(requestTask, HEADEROUTPUTVARIABLES, inputVariables);
+    setField(task, HEADEROUTPUTVARIABLES, inputVariables);
 
-    assertEquals(inputVariables, requestTask.getHeaderOutputVariables());
+    assertEquals(inputVariables, task.getHeaderOutputVariables());
   }
 
   @Test
   void setHeaderOutputVariablesWorksTest() {
-    setField(requestTask, HEADEROUTPUTVARIABLES, null);
+    setField(task, HEADEROUTPUTVARIABLES, null);
 
-    requestTask.setHeaderOutputVariables(inputVariables);
-    assertEquals(inputVariables, getField(requestTask, HEADEROUTPUTVARIABLES));
+    task.setHeaderOutputVariables(inputVariables);
+    assertEquals(inputVariables, getField(task, HEADEROUTPUTVARIABLES));
   }
 
   @Test
   void getRequestWorksTest() {
-    setField(requestTask, REQUEST, embeddedRequest);
+    setField(task, REQUEST, embeddedRequest);
 
-    assertEquals(embeddedRequest, requestTask.getRequest());
+    assertEquals(embeddedRequest, task.getRequest());
   }
 
   @Test
   void setRequestWorksTest() {
-    setField(requestTask, REQUEST, null);
+    setField(task, REQUEST, null);
 
-    requestTask.setRequest(embeddedRequest);
-    assertEquals(embeddedRequest, getField(requestTask, REQUEST));
+    task.setRequest(embeddedRequest);
+    assertEquals(embeddedRequest, getField(task, REQUEST));
   }
 
   @SuppressWarnings("unchecked")
@@ -211,17 +211,17 @@ class RequestTaskTest {
   void prePersistWorksTest(Map<String, Object> initial, Map<String, Object> expected, Map<String, Boolean> persist) {
 
     initial.forEach((String attribute, Object value) -> {
-      setField(requestTask, attribute, value);
+      setField(task, attribute, value);
     });
 
-    requestTask.prePersist();
+    task.prePersist();
 
     expected.forEach((String attribute, Object value) -> {
       if (attribute == HEADEROUTPUTVARIABLES) {
         final Set<EmbeddedVariable> eps = (Set<EmbeddedVariable>) value;
 
-        assertNotNull(getField(requestTask, attribute));
-        assertEquals(eps.size(), ((Set<EmbeddedVariable>) getField(requestTask, attribute)).size());
+        assertNotNull(getField(task, attribute));
+        assertEquals(eps.size(), ((Set<EmbeddedVariable>) getField(task, attribute)).size());
 
         eps.forEach(ep -> {
           if (ep != null) {
@@ -233,7 +233,7 @@ class RequestTaskTest {
           }
         });
       } else {
-        assertEquals(value, getField(requestTask, attribute));
+        assertEquals(value, getField(task, attribute));
       }
     });
   }
@@ -263,7 +263,7 @@ class RequestTaskTest {
    */
   private static Stream<Arguments> providePrePersistFor() {
 
-    final EmbeddedVariable variable = Mockito.spy(new EmbeddedVariable());
+    final EmbeddedVariable variable = spy(new EmbeddedVariable());
     final EmbeddedVariable nullValue = null;
     final Set<EmbeddedVariable> headerOutputVariables = Set.of(variable);
     final Set<EmbeddedVariable> headerOutputVariablesEmpty = Set.of();
