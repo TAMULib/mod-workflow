@@ -96,7 +96,7 @@ public class WorkflowEngineService {
    *
    * @throws WorkflowEngineServiceException When the request fails in some way preventing the return of an HttpEntity.
    */
-  @Transactional
+  @Transactional(rollbackFor = Exception.class)
   public void delete(String workflowId, String tenant, String token)
       throws WorkflowEngineServiceException {
 

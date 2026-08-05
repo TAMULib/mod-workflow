@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Each entity, etc.., must be found and explicitly deleted.
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class DeleteService {
 
   private static final Logger LOG = LoggerFactory.getLogger(DeleteService.class);
