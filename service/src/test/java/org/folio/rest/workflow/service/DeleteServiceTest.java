@@ -143,6 +143,24 @@ class DeleteServiceTest {
   }
 
   @Test
+  void deleteNodesForSimpleWithNoDeletionsTest() {
+
+    nodes.add(startEvent);
+
+    when(entityManager.createQuery(anyString())).thenReturn(typedQuery);
+
+    when(typedQuery.setParameter(anyString(), anyString())).thenAnswer(invocation -> {
+      return typedQuery;
+    });
+
+    when(typedQuery.executeUpdate()).thenReturn(0);
+
+    deleteService.deleteNodes(workflowOperationalNode);
+
+    verify(typedQuery).executeUpdate();
+  }
+
+  @Test
   void deleteNodesForNodeWithoutChildrenTest() {
 
     final List<Object[]> results = new ArrayList<>();
