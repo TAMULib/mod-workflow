@@ -48,6 +48,6 @@ class WorkflowOperationalDtoTest {
     assertEquals(VALUE, getField(workflowDto, "deploymentId"));
   }
 
-  private static class Impl extends Workflow implements WorkflowOperationalDto { };
+  private static class Impl extends Workflow implements WorkflowOperationalDto { }
 
 }

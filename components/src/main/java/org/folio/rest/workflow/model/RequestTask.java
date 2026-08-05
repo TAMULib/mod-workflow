@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.folio.rest.workflow.model.components.DelegateTask;
 import org.folio.rest.workflow.model.has.common.HasRequestTaskCommon;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * A task for regular HTTP requests.
@@ -22,6 +24,7 @@ public class RequestTask extends AbstractTask implements DelegateTask, HasReques
   @Getter
   @Setter
   @ElementCollection
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Set<EmbeddedVariable> headerOutputVariables;
 
   @Getter

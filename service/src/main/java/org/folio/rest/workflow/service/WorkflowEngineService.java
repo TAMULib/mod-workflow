@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.folio.rest.workflow.dto.WorkflowDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalDto;
+import org.folio.rest.workflow.dto.WorkflowOperationalNodeDto;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowNotFoundException;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,13 +58,16 @@ public class WorkflowEngineService {
   @Value("${okapi.camunda.rest-path:/camunda}")
   private String restPath;
 
+  private DeleteService deleteService;
+
   private WorkflowRepo workflowRepo;
 
   private JsonMapper mapper;
 
   private RestTemplate restTemplate;
 
-  public WorkflowEngineService(WorkflowRepo workflowRepo, JsonMapper mapper, RestTemplateBuilder restTemplateBuilder) {
+  public WorkflowEngineService(DeleteService deleteService, WorkflowRepo workflowRepo, JsonMapper mapper, RestTemplateBuilder restTemplateBuilder) {
+    this.deleteService = deleteService;
     this.workflowRepo = workflowRepo;
     this.mapper = mapper;
     this.restTemplate = restTemplateBuilder.build();
@@ -85,47 +90,24 @@ public class WorkflowEngineService {
   /**
    * Delete the Workflow from the given Workflow ID.
    *
-   * To be removed. This is just an experiment.
-   *
    * @param workflowId ID of the Workflow to delete.
    * @param tenant The tenant to use.
    * @param token The token to use.
    *
    * @throws WorkflowEngineServiceException When the request fails in some way preventing the return of an HttpEntity.
    */
+  @Transactional(rollbackFor = Exception.class)
   public void delete(String workflowId, String tenant, String token)
       throws WorkflowEngineServiceException {
 
-    final WorkflowOperationalDto workflow = workflowRepo.getViewById(workflowId, WorkflowOperationalDto.class);
-    final String id = workflow.getDeploymentId();
-    final String version = workflow.getVersionTag();
+    final WorkflowOperationalNodeDto workflow = workflowRepo.getViewById(workflowId, WorkflowOperationalNodeDto.class);
 
-    // Deployment ID will not exist if it has never been activated.
-    if (id != null) {
-      final ResponseEntity<ArrayNode> response = fetchDeploymentDefinitions(id, version, tenant, token);
-
-      if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.NOT_FOUND) {
-        final ArrayNode definitions = response.hasBody()
-          ? response.getBody()
-          : null;
-
-        if (definitions != null && response.getStatusCode() != HttpStatus.NOT_FOUND && !definitions.isEmpty()) {
-          try {
-            deactivate(workflowId, tenant, token);
-          } catch (WorkflowEngineServiceException e) {
-            final String message = String.format(
-              "Failed to delete Workflow ID '%s' for Deployment ID '%s' and Version Tag '%s' due to deactivation failure: %s!",
-              workflowId,
-              id,
-              version,
-              e.getMessage()
-            );
-
-            throw new WorkflowEngineServiceException(message, e);
-          }
-        }
-      }
+    // Deployment ID will not exist if it has not been activated.
+    if (workflow.getDeploymentId() != null) {
+      deleteDeployment(workflow, tenant, token);
     }
+
+    deleteService.deleteNodes(workflow);
 
     workflowRepo.deleteById(workflowId);
   }
@@ -207,6 +189,47 @@ public class WorkflowEngineService {
     }
 
     return instances;
+  }
+
+  /**
+   * Delete the deployed workflow.
+   *
+   * @param workflow The workflow to delete the deployment of.
+   * @param tenant   The tenant to use.
+   * @param token    The token to use.
+   *
+   * @throws WorkflowEngineServiceException When the request fails in some way preventing the return of an HttpEntity.
+   */
+  private void deleteDeployment(WorkflowOperationalNodeDto workflow, String tenant, String token) throws WorkflowEngineServiceException {
+
+    final String deploymentId = workflow.getDeploymentId();
+    final String id = workflow.getId();
+    final String version = workflow.getVersionTag();
+
+    final ResponseEntity<ArrayNode> response = fetchDeploymentDefinitions(deploymentId, version, tenant, token);
+
+    if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.NOT_FOUND) {
+
+      final ArrayNode definitions = response.hasBody()
+        ? response.getBody()
+        : null;
+
+      if (definitions != null && response.getStatusCode() != HttpStatus.NOT_FOUND && !definitions.isEmpty()) {
+        try {
+          deactivate(id, tenant, token);
+        } catch (WorkflowEngineServiceException e) {
+          final String message = String.format(
+            "Failed to delete Workflow ID '%s' for Deployment ID '%s' and Version Tag '%s' due to deactivation failure: %s!",
+            id,
+            deploymentId,
+            version,
+            e.getMessage()
+          );
+
+          throw new WorkflowEngineServiceException(message, e);
+        }
+      }
+    }
   }
 
   /**
