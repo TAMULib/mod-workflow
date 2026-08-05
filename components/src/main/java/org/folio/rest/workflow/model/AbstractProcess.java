@@ -16,7 +16,7 @@ import org.hibernate.annotations.ColumnDefault;
 /**
  * Provides a superclass for any Node implementing a process, such as Subprocess.
  *
- * This is intended to reduce repitition of getters and setters needed by the DelegateTask.
+ * This is intended to reduce repetition of getters and setters needed by the DelegateTask.
  */
 @MappedSuperclass
 public abstract class AbstractProcess extends Node implements HasAsync, HasNodes {

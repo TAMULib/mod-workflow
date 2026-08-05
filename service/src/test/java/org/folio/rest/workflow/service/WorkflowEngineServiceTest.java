@@ -29,11 +29,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.List;
 import org.folio.rest.workflow.dto.WorkflowDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalDto;
+import org.folio.rest.workflow.dto.WorkflowOperationalNodeDto;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowNotFoundException;
+import org.folio.rest.workflow.model.Node;
 import org.folio.rest.workflow.model.Workflow;
 import org.folio.rest.workflow.model.repo.WorkflowRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +66,9 @@ class WorkflowEngineServiceTest {
   private static final String PROCESS_DEFINITION = "process-definition";
 
   @Mock
+  private DeleteService deleteService;
+
+  @Mock
   private WorkflowRepo workflowRepo;
 
   @Mock
@@ -72,7 +78,11 @@ class WorkflowEngineServiceTest {
 
   private WorkflowAsOperationalDto workflowOperational;
 
+  private WorkflowAsOperationalNodeDto workflowOperationalNode;
+
   private WorkflowEngineService workflowEngineService;
+
+  private  List<Node> nodes;
 
   private JsonMapper mapper;
 
@@ -87,7 +97,9 @@ class WorkflowEngineServiceTest {
       .addModule(new JavaTimeModule())
       .build();
 
-    workflowEngineService = new WorkflowEngineService(workflowRepo, mapper, new RestTemplateBuilder());
+    workflowEngineService = new WorkflowEngineService(deleteService, workflowRepo, mapper, new RestTemplateBuilder());
+
+    nodes = List.of();
 
     workflow = new WorkflowAsDto();
     workflow.setId(UUID);
@@ -99,6 +111,13 @@ class WorkflowEngineServiceTest {
     workflowOperational.setDeploymentId(UUID);
     workflowOperational.setName(VALUE);
     workflowOperational.setVersionTag(VALUE);
+
+    workflowOperationalNode = new WorkflowAsOperationalNodeDto();
+    workflowOperationalNode.setId(UUID);
+    workflowOperationalNode.setDeploymentId(UUID);
+    workflowOperationalNode.setName(VALUE);
+    workflowOperationalNode.setNodes(nodes);
+    workflowOperationalNode.setVersionTag(VALUE);
 
     setField(workflowEngineService, "workflowRepo", workflowRepo);
     setField(workflowEngineService, "restTemplate", restTemplate);
@@ -178,7 +197,7 @@ class WorkflowEngineServiceTest {
 
     final WorkflowDto workflowDto = (WorkflowDto) workflow;
 
-    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalDto.class))).thenReturn(workflowOperational);
+    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalNodeDto.class))).thenReturn(workflowOperationalNode);
     when(workflowRepo.getViewById(anyString(), eq(WorkflowDto.class))).thenReturn(workflowDto);
 
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ArrayNode.class), anyMap()))
@@ -188,6 +207,8 @@ class WorkflowEngineServiceTest {
       .thenReturn(responseEntity);
 
     when(workflowRepo.save(any())).thenReturn(workflow);
+
+    doNothing().when(deleteService).deleteNodes(any(WorkflowOperationalNodeDto.class));
     doNothing().when(workflowRepo).deleteById(anyString());
 
     workflowEngineService.delete(UUID, OKAPI_TENANT, OKAPI_TOKEN);
@@ -203,11 +224,12 @@ class WorkflowEngineServiceTest {
 
     ResponseEntity<ArrayNode> responseArray = new ResponseEntity<>(arrayNodeSingle, HttpStatus.OK);
 
-    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalDto.class))).thenReturn(workflowOperational);
+    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalNodeDto.class))).thenReturn(workflowOperationalNode);
 
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ArrayNode.class), anyMap()))
       .thenReturn(responseArray);
 
+    doNothing().when(deleteService).deleteNodes(any(WorkflowOperationalNodeDto.class));
     doNothing().when(workflowRepo).deleteById(anyString());
 
     workflowEngineService.delete(UUID, OKAPI_TENANT, OKAPI_TOKEN);
@@ -232,7 +254,7 @@ class WorkflowEngineServiceTest {
 
     final WorkflowDto workflowDto = (WorkflowDto) workflow;
 
-    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalDto.class))).thenReturn(workflowOperational);
+    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalNodeDto.class))).thenReturn(workflowOperationalNode);
     when(workflowRepo.getViewById(anyString(), eq(WorkflowDto.class))).thenReturn(workflowDto);
 
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ArrayNode.class), anyMap()))
@@ -264,7 +286,7 @@ class WorkflowEngineServiceTest {
 
     final WorkflowDto workflowDto = (WorkflowDto) workflow;
 
-    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalDto.class))).thenReturn(workflowOperational);
+    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalNodeDto.class))).thenReturn(workflowOperationalNode);
     when(workflowRepo.getViewById(anyString(), eq(WorkflowDto.class))).thenReturn(workflowDto);
 
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ArrayNode.class), anyMap()))
@@ -299,7 +321,7 @@ class WorkflowEngineServiceTest {
 
     final WorkflowDto workflowDto = (WorkflowDto) workflow;
 
-    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalDto.class))).thenReturn(workflowOperational);
+    when(workflowRepo.getViewById(anyString(), eq(WorkflowOperationalNodeDto.class))).thenReturn(workflowOperationalNode);
     when(workflowRepo.getViewById(anyString(), eq(WorkflowDto.class))).thenReturn(workflowDto);
 
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ArrayNode.class), anyMap()))
@@ -765,5 +787,7 @@ class WorkflowEngineServiceTest {
   private class WorkflowAsDto extends Workflow implements WorkflowDto {}
 
   private class WorkflowAsOperationalDto extends Workflow implements WorkflowOperationalDto {}
+
+  private class WorkflowAsOperationalNodeDto extends Workflow implements WorkflowOperationalNodeDto {}
 
 }
