@@ -108,11 +108,15 @@ class WorkflowControllerTest {
 
   private static final String UUID = "aec4faca-8c3d-4b3b-a943-6003636991c0";
 
+  private static final String UUID_INVALID = "+";
+
   private static final String PATH_ACTIVATE = PATH + "/" + UUID + "/activate";
 
   private static final String PATH_DEACTIVATE = PATH + "/" + UUID + "/deactivate";
 
   private static final String PATH_DELETE = PATH + "/" + UUID + "/delete";
+
+  private static final String PATH_DELETE_INVALID = PATH + "/" + UUID_INVALID + "/delete";
 
   private static final String PATH_GET = PATH + "/" + UUID;
 
@@ -120,7 +124,9 @@ class WorkflowControllerTest {
 
   private static final String PATH_START = PATH + "/" + UUID + "/start";
 
-  private static final MultiValueMap<String, String> ID_PARAM = CollectionUtils.toMultiValueMap(Map.of(ID, List.of(UUID))); 
+  private static final MultiValueMap<String, String> ID_PARAM = CollectionUtils.toMultiValueMap(Map.of(ID, List.of(UUID)));
+
+  private static final MultiValueMap<String, String> ID_INVALID_PARAM = CollectionUtils.toMultiValueMap(Map.of(ID, List.of(UUID_INVALID)));
 
   private static final MultiValueMap<String, String> LIM_PARAM = CollectionUtils.toMultiValueMap(Map.of(
     LIMIT, List.of(LIMIT_VALUE)
@@ -271,6 +277,19 @@ class WorkflowControllerTest {
     Assertions.assertThatThrownBy(() -> {
       MockHttpServletRequestBuilder request = appendHeaders(delete(PATH_DELETE), OKAPI_HEAD_TENANT, APP_JSON, APP_JSON);
       request = appendParameters(request, ID_PARAM);
+
+      mvc.perform(request)
+        .andDo(log()).andExpect(status().is(404));
+    }).hasCauseInstanceOf(WorkflowNotFoundException.class);
+  }
+
+  @Test
+  void deleteWorkflowThrowsNotFoundInvalidIdSanitizeTest() throws Exception {
+    lenient().doThrow(WorkflowNotFoundException.class).when(workflowEngineService).exists(anyString());
+
+    Assertions.assertThatThrownBy(() -> {
+      MockHttpServletRequestBuilder request = appendHeaders(delete(PATH_DELETE_INVALID), OKAPI_HEAD_TENANT, APP_JSON, APP_JSON);
+      request = appendParameters(request, ID_INVALID_PARAM);
 
       mvc.perform(request)
         .andDo(log()).andExpect(status().is(404));
