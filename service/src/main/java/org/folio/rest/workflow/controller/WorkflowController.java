@@ -39,7 +39,7 @@ public class WorkflowController {
 
   private static final Log LOG = LogFactory.getLog(WorkflowController.class);
 
-  private static final Pattern REGX_NOT_GRAPH = Pattern.compile("[^\\p{C}]");
+  private static final Pattern REGX_NOT_GRAPH_DASH = Pattern.compile("[^\\w-]+", Pattern.UNICODE_CHARACTER_CLASS);
   private static final Pattern REGX_EOL = Pattern.compile("[\r\n]");
 
   private WorkflowEngineService workflowEngineService;
@@ -167,7 +167,7 @@ public class WorkflowController {
   private String sanitize(String param) {
     if (param == null) return "";
 
-    final Matcher matchNotGraph = REGX_NOT_GRAPH.matcher(param);
+    final Matcher matchNotGraph = REGX_NOT_GRAPH_DASH.matcher(param);
     final Matcher matchEol = REGX_EOL.matcher(matchNotGraph.replaceAll(""));
 
     return matchEol.replaceAll(" ");
