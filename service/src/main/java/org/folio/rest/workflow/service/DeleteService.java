@@ -59,6 +59,23 @@ public class DeleteService {
     "StartEvent"
   );
 
+  static final List<String> TASK_ENTITIES = List.of(
+    "CompressFileTask",
+    "DatabaseConnectionTask",
+    "DatabaseDisconnectTask",
+    "DatabaseQueryTask",
+    "DirectoryTask",
+    "EmailTask",
+    "FileTask",
+    "FolioRequestTask",
+    "FtpTask",
+    "InputTask",
+    "ProcessorTask",
+    "ReceiveTask",
+    "RequestTask",
+    "ScriptTask"
+  );
+
   @PersistenceContext
   private EntityManager entityManager;
 
@@ -141,6 +158,8 @@ public class DeleteService {
   @SuppressWarnings("S2077") // SonarQube false positive, the query is protected by extractEntityName() and cannot produce SQL escapes from entityName.
   void deleteSimpleEntity(String entityName, String id) {
 
+    deleteTaskEntity(entityName, id);
+
     final int total = entityManager.createQuery("DELETE FROM " + entityName + " e WHERE e.id = :id")
       .setParameter("id", id)
       .executeUpdate();
@@ -150,6 +169,29 @@ public class DeleteService {
     }
 
     LOG.debug("Deleted '{}' entities for entityName '{}' with id '{}'.", total, entityName, id);
+  }
+
+  /**
+   * Delete simple entities using the serialize as name.
+   *
+   * Do not use this to delete complex entities, such as those that implement `hasNode`.
+   *
+   * @param entityName The entity name for direct use in SQL.
+   * @param id         The ID of the row to delete.
+   */
+  @SuppressWarnings("S2077") // SonarQube false positive, the query is protected by extractEntityName() and cannot produce SQL escapes from entityName.
+  void deleteTaskEntity(String entityName, String id) {
+
+    if (!TASK_ENTITIES.contains(entityName)) return;
+
+    final String tableName = entityName.toLowerCase() + "_inputvariables";
+    final String idName = entityName.toLowerCase() + "_id";
+
+    final int total = entityManager.createNativeQuery("DELETE FROM " + tableName + " e WHERE e." + idName + " = :id")
+      .setParameter("id", id)
+      .executeUpdate();
+
+    LOG.debug("Deleted '{}' entities for entityName '{}' with {} '{}'.", total, tableName, idName, id);
   }
 
   /**
