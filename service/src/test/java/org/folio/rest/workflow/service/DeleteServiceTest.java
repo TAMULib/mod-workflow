@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.folio.rest.workflow.dto.WorkflowOperationalNodeDto;
 import org.folio.rest.workflow.model.Node;
+import org.folio.rest.workflow.model.RequestTask;
 import org.folio.rest.workflow.model.StartEvent;
 import org.folio.rest.workflow.model.Subprocess;
 import org.folio.rest.workflow.model.Workflow;
@@ -33,12 +34,14 @@ class DeleteServiceTest {
   /**
    * Needed to test using different IDs.
    */
-  private static final String UUID_ALT = "d2ad0ddb-8f0a-40e6-b543-1f43d62b8a95";
+  private static final String UUID_ALT  = "d2ad0ddb-8f0a-40e6-b543-1f43d62b8a95";
+  private static final String UUID_TASK = "8a4cd2cb-95ce-4a67-9305-ba363a1b0017";
 
   /**
    * Needed to test using different names.
    */
-  private static final String VALUE_ALT = "value_alt";
+  private static final String VALUE_ALT  = "value_alt";
+  private static final String VALUE_TASK = "value_task";
 
   @Mock
   private EntityManager entityManager;
@@ -46,10 +49,15 @@ class DeleteServiceTest {
   @Mock
   private TypedQuery<?> typedQuery;
 
+  @Mock
+  private TypedQuery<?> typedQueryTask;
+
   @Spy
   private DeleteService deleteService;
 
   private List<Node> nodes;
+
+  private RequestTask requestTask;
 
   private StartEvent startEvent;
 
@@ -61,6 +69,7 @@ class DeleteServiceTest {
   void beforeEach() {
 
     nodes = new ArrayList<>();
+    requestTask = new RequestTask();
     startEvent = new StartEvent();
     subprocess = new Subprocess();
     workflowOperationalNode = new WorkflowAsOperationalNodeDto();
@@ -72,6 +81,9 @@ class DeleteServiceTest {
     setField(workflowOperationalNode, "name", VALUE);
     setField(workflowOperationalNode, "nodes", nodes);
     setField(workflowOperationalNode, "versionTag", VALUE);
+
+    setField(requestTask, "id", UUID_TASK);
+    setField(requestTask, "name", VALUE_TASK);
 
     setField(startEvent, "id", UUID);
     setField(startEvent, "name", VALUE);
@@ -158,6 +170,31 @@ class DeleteServiceTest {
     deleteService.deleteNodes(workflowOperationalNode);
 
     verify(typedQuery).executeUpdate();
+  }
+
+  @Test
+  void deleteNodesForSimpleWithTaskTest() {
+
+    nodes.add(requestTask);
+
+    when(entityManager.createQuery(anyString())).thenReturn(typedQuery);
+    when(entityManager.createNativeQuery(anyString())).thenReturn(typedQueryTask);
+
+    when(typedQuery.setParameter(anyString(), anyString())).thenAnswer(invocation -> {
+      return typedQuery;
+    });
+
+    when(typedQueryTask.setParameter(anyString(), anyString())).thenAnswer(invocation -> {
+      return typedQueryTask;
+    });
+
+    when(typedQuery.executeUpdate()).thenReturn(1);
+    when(typedQueryTask.executeUpdate()).thenReturn(1);
+
+    deleteService.deleteNodes(workflowOperationalNode);
+
+    verify(typedQuery).executeUpdate();
+    verify(typedQueryTask).executeUpdate();
   }
 
   @Test
