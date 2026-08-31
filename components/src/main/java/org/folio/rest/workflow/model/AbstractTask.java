@@ -13,6 +13,8 @@ import org.folio.rest.workflow.model.components.Task;
 import org.folio.rest.workflow.model.converter.EmbeddedVariableConverter;
 import org.folio.rest.workflow.model.has.HasInputOutput;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Provides a superclass for any Node implementing a DelegateTask.
@@ -37,6 +39,7 @@ public abstract class AbstractTask extends Node implements HasInputOutput, Task 
   @Getter
   @Setter
   @ElementCollection
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Set<EmbeddedVariable> inputVariables;
 
   @Getter

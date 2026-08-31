@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class InputTask extends AbstractTask {
@@ -14,6 +16,7 @@ public class InputTask extends AbstractTask {
   @Getter
   @Setter
   @ElementCollection
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Set<EmbeddedInput> inputs;
 
   public InputTask() {
