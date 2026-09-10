@@ -15,12 +15,4 @@ public class WorkflowDeploymentNotActivated extends Exception {
     super(message, e);
   }
 
-  public WorkflowDeploymentNotActivated(int code) {
-    super(Integer.toString(code));
-  }
-
-  public WorkflowDeploymentNotActivated(int code, Exception e) {
-    super(Integer.toString(code), e);
-  }
-
 }
