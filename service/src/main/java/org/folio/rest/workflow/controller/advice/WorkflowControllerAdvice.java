@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.folio.rest.workflow.exception.WorkflowAlreadyActiveException;
 import org.folio.rest.workflow.exception.WorkflowCreateAlreadyExistsException;
 import org.folio.rest.workflow.exception.WorkflowDeploymentException;
+import org.folio.rest.workflow.exception.WorkflowDeploymentNotActivated;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowImportException;
@@ -57,6 +58,12 @@ public class WorkflowControllerAdvice extends AbstractAdvice {
   @ExceptionHandler(WorkflowDeploymentException.class)
   public ResponseEntity<String> handleWorkflowDeploymentException(WorkflowDeploymentException exception) {
     return buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(WorkflowDeploymentNotActivated.class)
+  public ResponseEntity<String> handleWorkflowDeploymentNotActivated(WorkflowDeploymentNotActivated exception) {
+    return buildError(exception, HttpStatus.NOT_FOUND);
   }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)

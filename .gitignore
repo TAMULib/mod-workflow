@@ -68,6 +68,8 @@ hs_err_pid*
 
 *.rdb*
 
+.attach*
+
 .DS_Store
 
 service/dependency-reduced-pom.xml
