@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import org.folio.rest.workflow.exception.WorkflowAlreadyActiveException;
 import org.folio.rest.workflow.exception.WorkflowCreateAlreadyExistsException;
 import org.folio.rest.workflow.exception.WorkflowDeploymentException;
+import org.folio.rest.workflow.exception.WorkflowDeploymentNotActivated;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowImportAlreadyImported;
@@ -43,6 +44,9 @@ class WorkflowControllerAdviceTest {
 
   private static final WorkflowCreateAlreadyExistsException WCAE_EXC1 = new WorkflowCreateAlreadyExistsException(VALUE, VALUE);
   private static final WorkflowCreateAlreadyExistsException WCAE_EXC2 = new WorkflowCreateAlreadyExistsException(VALUE, VALUE, R_EXC);
+
+  private static final WorkflowDeploymentNotActivated WDNA_EXC1 = new WorkflowDeploymentNotActivated(VALUE);
+  private static final WorkflowDeploymentNotActivated WDNA_EXC2 = new WorkflowDeploymentNotActivated(VALUE, R_EXC);
 
   private static final WorkflowNotFoundException WNF_EXC1 = new WorkflowNotFoundException(VALUE);
   private static final WorkflowNotFoundException WNF_EXC2 = new WorkflowNotFoundException(VALUE, R_EXC);
@@ -105,6 +109,20 @@ class WorkflowControllerAdviceTest {
     assertNotNull(response.getBody());
 
     assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+    assertTrue(matchBody(response, simpleName));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideWorkflowDeploymentNotActivateds")
+  void handleorkflowDeploymentNotActivatedTest(WorkflowDeploymentNotActivated exception, String simpleName) {
+
+    final ResponseEntity<String> response = advice.handleWorkflowDeploymentNotActivated(exception);
+
+    assertNotNull(response);
+    assertNotNull(response.getBody());
+
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
     assertTrue(matchBody(response, simpleName));
   }
@@ -220,7 +238,7 @@ class WorkflowControllerAdviceTest {
   private static Stream<Arguments> provideEntityNotFoundExceptions() {
 
     return Stream.of(
-      Arguments.of(ENF_EXC1,  EntityNotFoundException.class.getSimpleName()),
+      Arguments.of(ENF_EXC1, EntityNotFoundException.class.getSimpleName()),
       Arguments.of(ENF_EXC2, EntityNotFoundException.class.getSimpleName())
     );
   }
@@ -236,8 +254,24 @@ class WorkflowControllerAdviceTest {
   private static Stream<Arguments> provideWorkflowCreateAlreadyExistsExceptions() {
 
     return Stream.of(
-      Arguments.of(WCAE_EXC1,  WorkflowCreateAlreadyExistsException.class.getSimpleName()),
+      Arguments.of(WCAE_EXC1, WorkflowCreateAlreadyExistsException.class.getSimpleName()),
       Arguments.of(WCAE_EXC2, WorkflowCreateAlreadyExistsException.class.getSimpleName())
+    );
+  }
+
+  /**
+   * Helper function for parameterized test providing different types of WorkflowDeploymentNotActivated.
+   *
+   * @return
+   *   The arguments array stream with the stream columns as:
+   *     - Exception exception.
+   *     - String simpleName (exception name to match).
+   */
+  private static Stream<Arguments> provideWorkflowDeploymentNotActivateds() {
+
+    return Stream.of(
+      Arguments.of(WDNA_EXC1, WorkflowDeploymentNotActivated.class.getSimpleName()),
+      Arguments.of(WDNA_EXC2, WorkflowDeploymentNotActivated.class.getSimpleName())
     );
   }
 
@@ -252,7 +286,7 @@ class WorkflowControllerAdviceTest {
   private static Stream<Arguments> provideWorkflowNotFoundExceptions() {
 
     return Stream.of(
-      Arguments.of(WNF_EXC1,  WorkflowNotFoundException.class.getSimpleName()),
+      Arguments.of(WNF_EXC1, WorkflowNotFoundException.class.getSimpleName()),
       Arguments.of(WNF_EXC2, WorkflowNotFoundException.class.getSimpleName())
     );
   }
@@ -268,7 +302,7 @@ class WorkflowControllerAdviceTest {
   private static Stream<Arguments> provideWorkflowAlreadyActiveExceptions() {
 
     return Stream.of(
-      Arguments.of(WAA_EXC1,  WorkflowAlreadyActiveException.class.getSimpleName()),
+      Arguments.of(WAA_EXC1, WorkflowAlreadyActiveException.class.getSimpleName()),
       Arguments.of(WAA_EXC2, WorkflowAlreadyActiveException.class.getSimpleName())
     );
   }
@@ -284,7 +318,7 @@ class WorkflowControllerAdviceTest {
   private static Stream<Arguments> provideWorkflowDeploymentExceptions() {
 
     return Stream.of(
-      Arguments.of(WD_EXC1,  WorkflowDeploymentException.class.getSimpleName())
+      Arguments.of(WD_EXC1, WorkflowDeploymentException.class.getSimpleName())
     );
   }
 
@@ -299,7 +333,7 @@ class WorkflowControllerAdviceTest {
   private static Stream<Arguments> provideWorkflowDeploymentNotFounds() {
 
     return Stream.of(
-      Arguments.of(WDNF_EXC1,  WorkflowDeploymentNotFound.class.getSimpleName()),
+      Arguments.of(WDNF_EXC1, WorkflowDeploymentNotFound.class.getSimpleName()),
       Arguments.of(WDNF_EXC2, WorkflowDeploymentNotFound.class.getSimpleName()),
       Arguments.of(WDNF_EXC3, WorkflowDeploymentNotFound.class.getSimpleName()),
       Arguments.of(WDNF_EXC4, WorkflowDeploymentNotFound.class.getSimpleName())
@@ -317,7 +351,7 @@ class WorkflowControllerAdviceTest {
   private static Stream<Arguments> provideWorkflowEngineServiceExceptions() {
 
     return Stream.of(
-      Arguments.of(WES_EXC1,  WorkflowEngineServiceException.class.getSimpleName()),
+      Arguments.of(WES_EXC1, WorkflowEngineServiceException.class.getSimpleName()),
       Arguments.of(WES_EXC2, WorkflowEngineServiceException.class.getSimpleName()),
       Arguments.of(WES_EXC3, WorkflowEngineServiceException.class.getSimpleName()),
       Arguments.of(WES_EXC4, WorkflowEngineServiceException.class.getSimpleName())
