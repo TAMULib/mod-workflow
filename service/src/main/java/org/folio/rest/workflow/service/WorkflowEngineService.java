@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.folio.rest.workflow.dto.WorkflowDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalNodeDto;
+import org.folio.rest.workflow.exception.WorkflowDeploymentNotActivated;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowNotFoundException;
@@ -94,11 +95,12 @@ public class WorkflowEngineService {
    * @param tenant The tenant to use.
    * @param token The token to use.
    *
+   * @throws WorkflowDeploymentNotActivated If workflow is not activated.
    * @throws WorkflowEngineServiceException When the request fails in some way preventing the return of an HttpEntity.
    */
   @Transactional(rollbackFor = Exception.class)
   public void delete(String workflowId, String tenant, String token)
-      throws WorkflowEngineServiceException {
+      throws WorkflowDeploymentNotActivated, WorkflowEngineServiceException {
 
     final WorkflowOperationalNodeDto workflow = workflowRepo.getViewById(workflowId, WorkflowOperationalNodeDto.class);
 
@@ -126,12 +128,12 @@ public class WorkflowEngineService {
   }
 
   public JsonNode start(String workflowId, String tenant, String token, JsonNode context)
-      throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowNotFoundException {
+      throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowNotFoundException, WorkflowDeploymentNotActivated {
 
     WorkflowOperationalDto workflow = workflowRepo.getViewById(workflowId, WorkflowOperationalDto.class);
 
     if (workflow == null) {
-      throw new WorkflowNotFoundException(String.format("Workflow ID '%s'", workflowId));
+      throw new WorkflowNotFoundException(workflowId);
     }
 
     String id = workflow.getDeploymentId();
@@ -154,7 +156,7 @@ public class WorkflowEngineService {
       final ResponseEntity<JsonNode> response = exchange(url, HttpMethod.POST, contextHttpEntity, JsonNode.class, params);
 
       if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-        throw new WorkflowNotFoundException(String.format("Workflow ID '%s'", workflowId));
+        throw new WorkflowNotFoundException(workflowId);
       }
 
       return response.getBody();
@@ -164,9 +166,14 @@ public class WorkflowEngineService {
   }
 
   public JsonNode history(String workflowId, String tenant, String token)
-      throws WorkflowDeploymentNotFound, WorkflowEngineServiceException {
+      throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowDeploymentNotActivated, WorkflowNotFoundException {
 
     WorkflowOperationalDto workflow = workflowRepo.getViewById(workflowId, WorkflowOperationalDto.class);
+
+    if (workflow == null) {
+      throw new WorkflowNotFoundException(workflowId);
+    }
+
     String id = workflow.getDeploymentId();
     String version = workflow.getVersionTag();
 
@@ -198,15 +205,17 @@ public class WorkflowEngineService {
    * @param tenant   The tenant to use.
    * @param token    The token to use.
    *
+   * @throws WorkflowDeploymentNotActivated If workflow is not activated.
    * @throws WorkflowEngineServiceException When the request fails in some way preventing the return of an HttpEntity.
    */
-  private void deleteDeployment(WorkflowOperationalNodeDto workflow, String tenant, String token) throws WorkflowEngineServiceException {
+  private void deleteDeployment(WorkflowOperationalNodeDto workflow, String tenant, String token)
+    throws WorkflowDeploymentNotActivated, WorkflowEngineServiceException{
 
     final String deploymentId = workflow.getDeploymentId();
     final String id = workflow.getId();
     final String version = workflow.getVersionTag();
 
-    final ResponseEntity<ArrayNode> response = fetchDeploymentDefinitions(deploymentId, version, tenant, token);
+    final ResponseEntity<ArrayNode> response = fetchDeploymentDefinitions(id, deploymentId, version, tenant, token);
 
     if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.NOT_FOUND) {
 
@@ -243,13 +252,14 @@ public class WorkflowEngineService {
    *
    * @return The first matching response.
    *
+   * @throws WorkflowDeploymentNotActivated If workflow is not activated.
    * @throws WorkflowDeploymentNotFound     On not found.
    * @throws WorkflowEngineServiceException On error.
    */
   private JsonNode fetchFirstDeploymentDefinition(String workflowId, String deploymentId, String version, String tenant, String token)
-      throws WorkflowDeploymentNotFound, WorkflowEngineServiceException {
+      throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowDeploymentNotActivated {
 
-    final ResponseEntity<ArrayNode> response = fetchDeploymentDefinitions(deploymentId, version, tenant, token);
+    final ResponseEntity<ArrayNode> response = fetchDeploymentDefinitions(workflowId, deploymentId, version, tenant, token);
 
     if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.NOT_FOUND) {
       final ArrayNode definitions = response.hasBody()
@@ -269,6 +279,7 @@ public class WorkflowEngineService {
   /**
    * Fetch all deployments, but return the response entity to allow caller to handle.
    *
+   * @param workflowId   The Workflow ID for when there is an error.
    * @param deploymentId The activated Workflow deployment ID.
    * @param version      The Workflow version number.
    * @param tenant       The tenant.
@@ -276,13 +287,14 @@ public class WorkflowEngineService {
    *
    * @return The response entity.
    *
+   * @throws WorkflowDeploymentNotActivated If workflow is not activated.
    * @throws WorkflowEngineServiceException On error.
    */
-  private ResponseEntity<ArrayNode> fetchDeploymentDefinitions(String deploymentId, String version, String tenant, String token)
-      throws WorkflowEngineServiceException {
+  private ResponseEntity<ArrayNode> fetchDeploymentDefinitions(String workflowId, String deploymentId, String version, String tenant, String token)
+      throws WorkflowDeploymentNotActivated, WorkflowEngineServiceException {
 
     if (deploymentId == null) {
-      throw new WorkflowEngineServiceException("Failed to deployment definition: Deployment ID is missing!");
+      throw new WorkflowDeploymentNotActivated(String.format("Workflow with ID of '%s' is not activated.", workflowId));
     }
 
     final HttpEntity<Void> httpEntity = new HttpEntity<>(headers(tenant, token));

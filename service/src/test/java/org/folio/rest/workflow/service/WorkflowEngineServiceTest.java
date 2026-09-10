@@ -33,6 +33,7 @@ import java.util.List;
 import org.folio.rest.workflow.dto.WorkflowDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalDto;
 import org.folio.rest.workflow.dto.WorkflowOperationalNodeDto;
+import org.folio.rest.workflow.exception.WorkflowDeploymentNotActivated;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowNotFoundException;
@@ -183,7 +184,7 @@ class WorkflowEngineServiceTest {
   }
 
   @Test
-  void deleteWorksTest() throws WorkflowEngineServiceException {
+  void deleteWorksTest() throws WorkflowEngineServiceException, WorkflowDeploymentNotActivated {
 
     final ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
     objectNode.put("id", UUID);
@@ -218,7 +219,7 @@ class WorkflowEngineServiceTest {
   }
 
   @Test
-  void deleteNotActiveWorksTest() throws WorkflowEngineServiceException {
+  void deleteNotActiveWorksTest() throws WorkflowEngineServiceException, WorkflowDeploymentNotActivated {
 
     ArrayNode arrayNodeSingle = JsonNodeFactory.instance.arrayNode();
 
@@ -355,7 +356,8 @@ class WorkflowEngineServiceTest {
   }
 
   @Test
-  void startWorksTest() throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowNotFoundException {
+  void startWorksTest()
+    throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowNotFoundException, WorkflowDeploymentNotActivated {
 
     final ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
     objectNode.put("id", UUID);
@@ -449,11 +451,11 @@ class WorkflowEngineServiceTest {
 
     when(workflowRepo.getViewById(anyString(), ArgumentMatchers.<Class<WorkflowOperationalDto>>any())).thenReturn(workflowOperationalDto);
 
-    final Exception exception = assertThrows(WorkflowEngineServiceException.class, () -> {
+    final Exception exception = assertThrows(WorkflowDeploymentNotActivated.class, () -> {
       workflowEngineService.start(UUID, OKAPI_TENANT, OKAPI_TOKEN, context);
     });
 
-    assertTrue(exception.getMessage().contains("Deployment ID is missing"));
+    assertTrue(exception.getMessage().contains(UUID));
   }
 
   @Test
@@ -554,7 +556,9 @@ class WorkflowEngineServiceTest {
   }
 
   @Test
-  void historyWorksTest() throws WorkflowDeploymentNotFound, WorkflowEngineServiceException {
+  void historyWorksTest()
+    throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowDeploymentNotActivated, WorkflowNotFoundException {
+
     WorkflowOperationalDto workflowOperationalDto = (WorkflowOperationalDto) workflowOperational;
     ResponseEntity<ArrayNode> processEntity = new ResponseEntity<>(HttpStatus.OK);
     ResponseEntity<ArrayNode> historyEntity = new ResponseEntity<>(HttpStatus.OK);
@@ -594,7 +598,37 @@ class WorkflowEngineServiceTest {
   }
 
   @Test
-  void historyWorksWithoutOkFetchingIncidentsHistoryTest() throws WorkflowDeploymentNotFound, WorkflowEngineServiceException {
+  void historyWorksWithNotFoundWorkflowTest() {
+
+    ResponseEntity<ArrayNode> processEntity = new ResponseEntity<>(HttpStatus.OK);
+    ResponseEntity<ArrayNode> historyEntity = new ResponseEntity<>(HttpStatus.OK);
+
+    ObjectNode objectNode = mapper.createObjectNode();
+    objectNode.put("id", UUID);
+
+    ObjectNode historyNode = mapper.createObjectNode();
+    historyNode.put("id", UUID);
+    historyNode.put("history", VALUE);
+
+    ObjectNode incidentNode = mapper.createObjectNode();
+    incidentNode.put("id", UUID);
+
+    ArrayNode processNode = mapper.createArrayNode();
+    processNode.add(objectNode);
+    setField(processEntity, "body", processNode);
+
+    ArrayNode historyArrayNode = mapper.createArrayNode();
+    historyArrayNode.add(historyNode);
+    setField(historyEntity, "body", historyArrayNode);
+
+    assertThrows(WorkflowNotFoundException.class, () -> {
+      workflowEngineService.history(UUID, OKAPI_TENANT, OKAPI_TOKEN);
+    });
+  }
+
+  @Test
+  void historyWorksWithoutOkFetchingIncidentsHistoryTest()
+    throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowDeploymentNotActivated, WorkflowNotFoundException {
 
     WorkflowOperationalDto workflowOperationalDto = (WorkflowOperationalDto) workflowOperational;
 

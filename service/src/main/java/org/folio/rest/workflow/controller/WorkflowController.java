@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.folio.rest.workflow.exception.WorkflowDeploymentNotActivated;
 import org.folio.rest.workflow.exception.WorkflowDeploymentNotFound;
 import org.folio.rest.workflow.exception.WorkflowEngineServiceException;
 import org.folio.rest.workflow.exception.WorkflowImportException;
@@ -123,7 +124,7 @@ public class WorkflowController {
     @PathVariable String id,
     @TenantHeader String tenant,
     @TokenHeader String token
-  ) throws WorkflowEngineServiceException, WorkflowNotFoundException {
+  ) throws WorkflowEngineServiceException, WorkflowNotFoundException, WorkflowDeploymentNotActivated {
     LOG.info(String.format("Deleting: %s", sanitize(id)));
 
     workflowEngineService.exists(id);
@@ -139,8 +140,9 @@ public class WorkflowController {
     @PathVariable String id,
     @TenantHeader String tenant,
     @TokenHeader String token
-  ) throws WorkflowDeploymentNotFound, WorkflowEngineServiceException {
+  ) throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowDeploymentNotActivated, WorkflowNotFoundException {
     LOG.debug(String.format("Retrieving History: %s", sanitize(id)));
+
     return workflowEngineService.history(id, tenant, token);
   }
 
@@ -150,7 +152,7 @@ public class WorkflowController {
     @TenantHeader String tenant,
     @TokenHeader String token,
     @RequestBody JsonNode context
-  ) throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowNotFoundException {
+  ) throws WorkflowDeploymentNotFound, WorkflowEngineServiceException, WorkflowNotFoundException, WorkflowDeploymentNotActivated {
     LOG.info(String.format("Starting: %s with context %s", sanitize(id), sanitize(context)));
     return workflowEngineService.start(id, tenant, token, context);
   }
