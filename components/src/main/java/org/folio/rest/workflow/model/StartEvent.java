@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.enums.StartEventType;
 import org.folio.rest.workflow.model.components.Event;
@@ -30,7 +29,6 @@ public class StartEvent extends Node implements Event, HasAsyncBefore, HasExpres
   @ColumnDefault("false")
   private Boolean interrupting;
 
-  @NotNull
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private StartEventType type;
@@ -40,7 +38,7 @@ public class StartEvent extends Node implements Event, HasAsyncBefore, HasExpres
 
     asyncBefore = false;
     interrupting = false;
-    type = StartEventType.NONE;
+    type = StartEventType.MESSAGE_CORRELATION;
   }
 
   @Override
@@ -57,7 +55,7 @@ public class StartEvent extends Node implements Event, HasAsyncBefore, HasExpres
     }
 
     if (type == null) {
-      type = StartEventType.NONE;
+      type = StartEventType.MESSAGE_CORRELATION;
     }
   }
 

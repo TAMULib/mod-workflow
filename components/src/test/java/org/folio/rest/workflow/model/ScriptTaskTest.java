@@ -248,7 +248,7 @@ class ScriptTaskTest {
    *     - Arguments expect The expected values.
    */
   private static Stream<Arguments> providePrePersistFor() {
-    final String scriptFormat = "javaScript";
+    final String scriptFormat = "javascript";
 
     return List.of(
       Arguments.of(

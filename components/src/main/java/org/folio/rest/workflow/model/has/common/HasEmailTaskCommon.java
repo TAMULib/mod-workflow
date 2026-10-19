@@ -6,7 +6,7 @@ package org.folio.rest.workflow.model.has.common;
 public interface HasEmailTaskCommon {
 
   public String getAttachmentPath();
-  public String getIncludeAttachment();
+  public Boolean getIncludeAttachment();
   public String getMailBcc();
   public String getMailCc();
   public String getMailFrom();
@@ -16,7 +16,7 @@ public interface HasEmailTaskCommon {
   public String getMailTo();
 
   public void setAttachmentPath(String attachmentPath);
-  public void setIncludeAttachment(String includeAttachment);
+  public void setIncludeAttachment(Boolean includeAttachment);
   public void setMailBcc(String mailBcc);
   public void setMailCc(String mailCc);
   public void setMailFrom(String mailFrom);

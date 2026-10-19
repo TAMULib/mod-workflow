@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.enums.HttpMethod;
 import org.folio.rest.workflow.model.has.HasId;
@@ -17,7 +17,6 @@ import org.folio.spring.domain.model.AbstractBaseEntity;
 @Entity
 public class Trigger extends AbstractBaseEntity implements HasId, HasInformational, HasMethod, HasName, HasPathPattern {
 
-  @NotNull
   @Size(min = 4, max = 64)
   @Column(unique = true)
   private String name;
@@ -26,18 +25,26 @@ public class Trigger extends AbstractBaseEntity implements HasId, HasInformation
   @Column(nullable = true)
   private String description;
 
-  @NotNull
   @Size(min = 2, max = 256)
   @Column(nullable = false)
   private String pathPattern;
 
-  @NotNull
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private HttpMethod method;
 
   public Trigger() {
     super();
+
+    method = HttpMethod.POST;
+  }
+
+  @PrePersist
+  public void prePersist() {
+
+    if (method == null) {
+      method = HttpMethod.POST;
+    }
   }
 
   /**

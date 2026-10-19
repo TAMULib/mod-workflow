@@ -1,21 +1,16 @@
 package org.folio.rest.workflow.dto;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 public class Request {
 
-  @NotNull
   private String url;
 
-  @NotNull
   private HttpMethod method;
 
-  @NotNull
   private String contentType;
 
-  @NotNull
   private String accept;
 
   private String bodyTemplate;
@@ -26,7 +21,6 @@ public class Request {
 
   private String responseKey;
 
-  @NotNull
   private Boolean sendEmptyBody;
 
   public Request() {

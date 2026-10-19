@@ -48,7 +48,7 @@ public class FtpTask extends AbstractTask implements DelegateTask, HasFtpTaskCom
     op = SftpOp.GET;
     originPath = "";
     port = 80;
-    scheme = "";
+    scheme = "ftp";
   }
 
   @Override
@@ -77,7 +77,7 @@ public class FtpTask extends AbstractTask implements DelegateTask, HasFtpTaskCom
     }
 
     if (scheme == null) {
-      scheme = "";
+      scheme = "ftp";
     }
   }
 

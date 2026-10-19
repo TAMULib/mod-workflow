@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.folio.rest.workflow.model.components.Branch;
@@ -14,7 +13,6 @@ import org.folio.rest.workflow.model.has.common.HasMoveToNodeCommon;
 @Entity
 public class MoveToNode extends Node implements Branch, HasMoveToNodeCommon {
 
-  @NotNull
   @Column(nullable = false)
   private String gatewayId;
 

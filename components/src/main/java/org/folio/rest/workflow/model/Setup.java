@@ -2,6 +2,7 @@ package org.folio.rest.workflow.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.PrePersist;
 import org.folio.rest.workflow.model.has.HasAsync;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -29,7 +30,9 @@ public class Setup implements HasAsync {
    * Embeddables do not utilize @PrePersist annotation due to it not working well in certain circumstances.
    * Therefore, this must be manually called by the class utilizing this class.
    */
+  @PrePersist
   public void prePersist() {
+
     if (asyncAfter == null) {
       asyncAfter = false;
     }

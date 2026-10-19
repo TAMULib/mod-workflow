@@ -14,6 +14,8 @@ public class ProcessorTask extends AbstractTask implements DelegateTask, HasProc
 
   public ProcessorTask() {
     super();
+
+    processor = new EmbeddedProcessor();
   }
 
   @Override

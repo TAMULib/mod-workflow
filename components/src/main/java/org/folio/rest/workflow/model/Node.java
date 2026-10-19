@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.model.converter.JsonNodeConverter;
 import org.folio.rest.workflow.model.has.HasId;
@@ -20,7 +19,6 @@ import org.folio.spring.domain.model.AbstractBaseEntity;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Node extends AbstractBaseEntity implements HasId, HasInformational, HasName, HasNodeCommon, NodeInterface {
 
-  @NotNull
   @Size(min = 3, max = 64)
   @Column(nullable = false)
   private String name;

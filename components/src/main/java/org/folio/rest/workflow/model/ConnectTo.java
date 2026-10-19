@@ -3,13 +3,11 @@ package org.folio.rest.workflow.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.NotNull;
 import org.folio.rest.workflow.model.components.Navigation;
 
 @Entity
 public class ConnectTo extends Node implements Navigation {
 
-  @NotNull
   @Column(nullable = false)
   private String nodeId;
 

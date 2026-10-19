@@ -47,12 +47,10 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   @ColumnDefault("false")
   private Boolean active;
 
-  @Nullable
   @Column
   private String checksum;
 
-  @NotNull
-  @Column(columnDefinition="TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()")
+  @Column(columnDefinition="TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()", nullable = false)
   private Instant createdOn;
 
   @Column(unique = true)
@@ -74,7 +72,6 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Map<String, JsonNode> initialContext;
 
-  @NotNull
   @Size(min = 4, max = 64)
   @Column(nullable = false, unique = true)
   private String name;
@@ -86,12 +83,10 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   @Embedded
   private Setup setup;
 
-  @NotNull
   @Column(columnDefinition="TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()")
   private Instant updatedOn;
 
   @Version
-  @NotNull
   @Size(min = 1, max = 64)
   @Column(nullable = false)
   private String versionTag;
@@ -103,15 +98,17 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
     checksum = null;
     createdOn = now();
     name = "";
-    historyTimeToLive = 0;
+    historyTimeToLive = 90;
     initialContext = new HashMap<>();
     nodes = new ArrayList<>();
+    setup = new Setup();
     updatedOn = now();
     versionTag = "1.0";
   }
 
   @PrePersist
   public void prePersist() {
+
     if (active == null) {
       active = false;
     }
@@ -121,7 +118,7 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
     }
 
     if (historyTimeToLive == null) {
-      historyTimeToLive = 0;
+      historyTimeToLive = 90;
     }
 
     if (name == null) {

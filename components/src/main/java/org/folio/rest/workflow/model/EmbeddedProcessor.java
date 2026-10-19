@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.enums.ScriptType;
 import org.folio.rest.workflow.model.has.common.HasEmbeddedProcessorCommon;
@@ -17,7 +16,6 @@ public class EmbeddedProcessor implements HasEmbeddedProcessorCommon {
   private Integer buffer;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
-  @NotNull
   @Column(columnDefinition = "TEXT", nullable = true)
   private String code;
 
@@ -26,13 +24,11 @@ public class EmbeddedProcessor implements HasEmbeddedProcessorCommon {
   private Integer delay;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
-  @NotNull
   @Size(min = 4, max = 128)
   @Column(nullable = true)
   private String functionName;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
-  @NotNull
   @Column(nullable = true)
   @Enumerated(EnumType.STRING)
   private ScriptType scriptType;

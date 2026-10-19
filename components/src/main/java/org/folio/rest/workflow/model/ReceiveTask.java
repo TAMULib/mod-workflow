@@ -3,14 +3,12 @@ package org.folio.rest.workflow.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.model.components.Wait;
 
 @Entity
 public class ReceiveTask extends AbstractTask implements Wait {
 
-  @NotNull
   @Size(min = 4, max = 256)
   @Column(nullable = false)
   private String message;

@@ -30,6 +30,7 @@ public class FolioRequestTask extends AbstractTask implements DelegateTask, HasR
     super();
 
     headerOutputVariables = new HashSet<>();
+    request = new EmbeddedRequest();
   }
 
   @Override
@@ -44,6 +45,11 @@ public class FolioRequestTask extends AbstractTask implements DelegateTask, HasR
       headerOutputVariables.forEach((EmbeddedVariable ev) -> {
         if (ev != null) ev.prePersist();
       });
+    }
+
+    // @Embeddable with @PrePersist do not consistently call PrePersist and so this must be manually triggered.
+    if (request != null) {
+      request.prePersist();
     }
   }
 

@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotNull;
 import org.folio.rest.workflow.enums.HttpMethod;
 import org.folio.rest.workflow.has.common.HasActionCommon;
 import org.folio.rest.workflow.model.has.HasMethod;
@@ -13,15 +12,12 @@ import org.folio.rest.workflow.model.has.HasPathPattern;
 @Embeddable
 public class Action implements HasActionCommon, HasMethod, HasPathPattern {
 
-  @NotNull
   @Column(nullable = false)
   private String interfaceName;
 
-  @NotNull
   @Column(nullable = false)
   private String pathPattern;
 
-  @NotNull
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private HttpMethod method;

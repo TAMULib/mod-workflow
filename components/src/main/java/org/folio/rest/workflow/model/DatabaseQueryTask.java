@@ -27,7 +27,7 @@ public class DatabaseQueryTask extends AbstractTask implements DelegateTask, Has
   @Column(nullable = true)
   private DatabaseResultType resultType;
 
-  @Column(nullable = true)
+  @Column(nullable = false)
   @ColumnDefault("false")
   private Boolean includeHeader;
 

@@ -302,8 +302,8 @@ class EmailTaskTest {
   void setIncludeAttachmentWorksTest() {
     setField(emailTask, "includeAttachment", null);
 
-    emailTask.setIncludeAttachment(VALUE);
-    assertEquals(VALUE, getField(emailTask, "includeAttachment"));
+    emailTask.setIncludeAttachment(true);
+    assertEquals(true, getField(emailTask, "includeAttachment"));
   }
 
   @ParameterizedTest
