@@ -13,9 +13,10 @@ public class EmailTask extends AbstractTask implements DelegateTask, HasEmailTas
   @Column(columnDefinition = "TEXT", nullable = true)
   private String attachmentPath;
 
+  // Must be String rather than Boolean to allow freemarker translation of variables.
   @Column(nullable = false)
-  @ColumnDefault("false")
-  private Boolean includeAttachment;
+  @ColumnDefault("'false'")
+  private String includeAttachment;
 
   @Column(nullable = true)
   private String mailBcc;
@@ -41,7 +42,7 @@ public class EmailTask extends AbstractTask implements DelegateTask, HasEmailTas
   public EmailTask() {
     super();
 
-    includeAttachment = false;
+    includeAttachment = "false";
     mailFrom = "";
     mailText = "";
     mailTo = "";
@@ -54,7 +55,7 @@ public class EmailTask extends AbstractTask implements DelegateTask, HasEmailTas
     super.prePersist();
 
     if (includeAttachment == null) {
-      includeAttachment = false;
+      includeAttachment = "false";
     }
 
     if (mailFrom == null) {
@@ -80,7 +81,7 @@ public class EmailTask extends AbstractTask implements DelegateTask, HasEmailTas
   }
 
   @Override
-  public Boolean getIncludeAttachment() {
+  public String getIncludeAttachment() {
     return includeAttachment;
   }
 
@@ -125,7 +126,7 @@ public class EmailTask extends AbstractTask implements DelegateTask, HasEmailTas
   }
 
   @Override
-  public void setIncludeAttachment(Boolean includeAttachment) {
+  public void setIncludeAttachment(String includeAttachment) {
     this.includeAttachment = includeAttachment;
   }
 
