@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ class EmbeddedVariableTest {
   private static final String ASARRAY     = "asArray";
   private static final String ASJSON      = "asJson";
   private static final String ASTRANSIENT = "asTransient";
+  private static final String KEY         = "key";
   private static final String SPIN        = "spin";
   private static final String TYPE        = "type";
 
@@ -35,17 +37,17 @@ class EmbeddedVariableTest {
 
   @Test
   void getKeyWorksTest() {
-    setField(embeddedVariable, "key", VALUE);
+    setField(embeddedVariable, KEY, VALUE);
 
     assertEquals(VALUE, embeddedVariable.getKey());
   }
 
   @Test
   void setKeyWorksTest() {
-    setField(embeddedVariable, "key", null);
+    setField(embeddedVariable, KEY, null);
 
     embeddedVariable.setKey(VALUE);
-    assertEquals(VALUE, getField(embeddedVariable, "key"));
+    assertEquals(VALUE, getField(embeddedVariable, KEY));
   }
 
   @Test
@@ -147,48 +149,65 @@ class EmbeddedVariableTest {
    */
   private static Stream<Arguments> providePrePersistFor() {
 
-    return List.of(
-      Arguments.of(
-        helperFieldMap(null, null,  null,  null,  null),
-        helperFieldMap(false, false, false, false, PROCESS)
-      ),
-      Arguments.of(
-        helperFieldMap(true, null,  null,  null,  null),
-        helperFieldMap(true, false, false, false, PROCESS)
-      ),
-      Arguments.of(
-        helperFieldMap(null, true,  null,  null,  null),
-        helperFieldMap(false, true,  false, false, PROCESS)
-      ),
-      Arguments.of(
-        helperFieldMap(null, null,  true,  null,  null),
-        helperFieldMap(false, false, true,  false, PROCESS)
-      ),
-      Arguments.of(
-        helperFieldMap(null, null,  null,  true,  null),
-        helperFieldMap(false, false, false, true,  PROCESS)
-      ),
-      Arguments.of(
-        helperFieldMap(null, null,  null,  null,  LOCAL),
-        helperFieldMap(false, false, false, false, LOCAL)
-      )
-    ).stream();
+    final List<Arguments> arguments = new ArrayList<>();
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null, null,  null,  null,  null,  null),
+      helperFieldMap(null, false, false, false, false, PROCESS)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(KEY,  null,  null,  null,  null,  null),
+      helperFieldMap(KEY,  false, false, false, false, PROCESS)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null, true,  null,  null,  null,  null),
+      helperFieldMap(null, true,  false, false, false, PROCESS)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null, null,  true,  null,  null,  null),
+      helperFieldMap(null, false, true,  false, false, PROCESS)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null, null,  null,  true,  null,  null),
+      helperFieldMap(null, false, false, true,  false, PROCESS)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null, null,  null,  null,  true,  null),
+      helperFieldMap(null, false, true, false, true,  PROCESS)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null, null,  null,  null,  null,  LOCAL),
+      helperFieldMap(null, false, false, false, false, LOCAL)
+    ));
+
+    return arguments.stream();
   }
 
   /**
    * Helper for reducing in line code repetition for assignments.
    *
-   * @param asArray The asArray value.
-   * @param asJson The asJson value.
+   * @param key         The key value.
+   * @param asArray     The asArray value.
+   * @param asJson      The asJson value.
    * @param asTransient The asTransient value.
-   * @param spin The spin value.
-   * @param type The type value.
+   * @param spin        The spin value.
+   * @param type        The type value.
    *
    * @return The built arguments map.
    */
-  private static Map<String, Object> helperFieldMap(Boolean asArray, Boolean asJson, Boolean asTransient, Boolean spin, VariableType type) {
+  private static Map<String, Object> helperFieldMap(
+    String key, Boolean asArray, Boolean asJson, Boolean asTransient, Boolean spin, VariableType type
+  ) {
+
     final Map<String, Object> map = new HashMap<>();
 
+    map.put(KEY, key);
     map.put(ASARRAY, asArray);
     map.put(ASJSON, asJson);
     map.put(ASTRANSIENT, asTransient);

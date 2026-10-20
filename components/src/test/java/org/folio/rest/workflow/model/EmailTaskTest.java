@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -330,41 +331,50 @@ class EmailTaskTest {
    */
   private static Stream<Arguments> providePrePersistFor() {
 
-    return List.of(
-      Arguments.of(
-        helperFieldMap(NULL_STR, NULL_STR, NULL_STR, NULL_STR),
-        helperFieldMap("",       "",       "",       "")
-      ),
-      Arguments.of(
-        helperFieldMap(VALUE,    NULL_STR, NULL_STR, NULL_STR),
-        helperFieldMap(VALUE,    "",       "",       "")
-      ),
-      Arguments.of(
-        helperFieldMap(NULL_STR, VALUE,    NULL_STR, NULL_STR),
-        helperFieldMap("",       VALUE,    "",       "")
-      ),
-      Arguments.of(
-        helperFieldMap(NULL_STR, NULL_STR, VALUE,    NULL_STR),
-        helperFieldMap("",       "",       VALUE,    "")
-      ),
-      Arguments.of(
-        helperFieldMap(NULL_STR, NULL_STR, NULL_STR, VALUE),
-        helperFieldMap("",       "",       "",       VALUE)
-      )
-    ).stream();
+    final List<Arguments> arguments = new ArrayList<>();
+
+    arguments.add(Arguments.of(
+      helperFieldMap(NULL_STR, NULL_STR, NULL_STR, NULL_STR),
+      helperFieldMap("",       "",       "",       "")
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(VALUE,    NULL_STR, NULL_STR, NULL_STR),
+      helperFieldMap(VALUE,    "",       "",       "")
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(NULL_STR, VALUE,    NULL_STR, NULL_STR),
+      helperFieldMap("",       VALUE,    "",       "")
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(NULL_STR, NULL_STR, VALUE,    NULL_STR),
+      helperFieldMap("",       "",       VALUE,    "")
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(NULL_STR, NULL_STR, NULL_STR, VALUE),
+      helperFieldMap("",       "",       "",       VALUE)
+    ));
+
+    return arguments.stream();
   }
 
   /**
    * Helper for reducing in line code repetition for assignments.
    *
-   * @param mailFrom The mailFrom value.
-   * @param mailText The mailText value.
-   * @param mailTo The mailTo value.
+   * @param mailFrom    The mailFrom value.
+   * @param mailText    The mailText value.
+   * @param mailTo      The mailTo value.
    * @param mailSubject The mailSubject value.
    *
    * @return The built arguments map.
    */
-  private static Map<String, Object> helperFieldMap(String mailFrom, String mailText, String mailTo, String mailSubject) {
+  private static Map<String, Object> helperFieldMap(
+    String mailFrom, String mailText, String mailTo, String mailSubject)
+  {
+
     final Map<String, Object> map = new HashMap<>();
 
     map.put(MAILFROM, mailFrom);

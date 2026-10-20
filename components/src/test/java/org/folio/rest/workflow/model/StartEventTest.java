@@ -1,13 +1,13 @@
 package org.folio.rest.workflow.model;
 
 import static org.folio.rest.workflow.enums.StartEventType.MESSAGE_CORRELATION;
-import static org.folio.rest.workflow.enums.StartEventType.NONE;
 import static org.folio.rest.workflow.enums.StartEventType.SCHEDULED;
 import static org.folio.spring.test.mock.MockMvcConstant.VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,24 +180,29 @@ class StartEventTest {
    */
   private static Stream<Arguments> providePrePersistFor() {
 
-    return List.of(
-      Arguments.of(
-        helperFieldMap(null,  null,  null),
-        helperFieldMap(false, false, NONE)
-      ),
-      Arguments.of(
-        helperFieldMap(true,  null,  null),
-        helperFieldMap(true,  false, NONE)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  true,  null),
-        helperFieldMap(false, true,  NONE)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null,  SCHEDULED),
-        helperFieldMap(false, false, SCHEDULED)
-      )
-    ).stream();
+    final List<Arguments> arguments = new ArrayList<>();
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null,  null),
+      helperFieldMap(false, false, MESSAGE_CORRELATION)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(true,  null,  null),
+      helperFieldMap(true,  false, MESSAGE_CORRELATION)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  true,  null),
+      helperFieldMap(false, true,  MESSAGE_CORRELATION)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null,  SCHEDULED),
+      helperFieldMap(false, false, SCHEDULED)
+    ));
+
+    return arguments.stream();
   }
 
   /**

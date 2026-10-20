@@ -33,6 +33,7 @@ class FtpTaskTest {
   private static final String DESCRIPTION     = "description";
   private static final String DESERIALIZEAS   = "deserializeAs";
   private static final String DESTINATIONPATH = "destinationPath";
+  private static final String FTP             = "ftp";
   private static final String HOST            = "host";
   private static final String ID              = "id";
   private static final String INPUTVARIABLES  = "inputVariables";
@@ -44,6 +45,8 @@ class FtpTaskTest {
   private static final String PORT            = "port";
   private static final String SCHEME          = "scheme";
   private static final String USERNAME        = "username";
+
+  private static final Integer DEFAULT_PORT = 80;
 
   @Mock
   private EmbeddedVariable embeddedVariable;
@@ -335,36 +338,34 @@ class FtpTaskTest {
    */
   private static Stream<Arguments> providePrePersistFor() {
 
-    final Integer defaultPort = 80;
-
     return List.of(
       Arguments.of(
         helperFieldMap(NULL_STR, NULL_STR, null, NULL_STR, null,        NULL_STR),
-        helperFieldMap("",       "",       GET,  "",       defaultPort, "")
+        helperFieldMap("",       "",       GET,  "",       DEFAULT_PORT, FTP)
       ),
       Arguments.of(
         helperFieldMap(VALUE,    NULL_STR, null, NULL_STR, null,        NULL_STR),
-        helperFieldMap(VALUE,    "",       GET,  "",       defaultPort, "")
+        helperFieldMap(VALUE,    "",       GET,  "",       DEFAULT_PORT, FTP)
       ),
       Arguments.of(
         helperFieldMap(NULL_STR, VALUE,    null, NULL_STR, null,        NULL_STR),
-        helperFieldMap("",       VALUE,    GET,  "",       defaultPort, "")
+        helperFieldMap("",       VALUE,    GET,  "",       DEFAULT_PORT, FTP)
       ),
       Arguments.of(
         helperFieldMap(NULL_STR, NULL_STR, PUT,  NULL_STR, null,        NULL_STR),
-        helperFieldMap("",       "",       PUT,  "",       defaultPort, "")
+        helperFieldMap("",       "",       PUT,  "",       DEFAULT_PORT, FTP)
       ),
       Arguments.of(
         helperFieldMap(NULL_STR, NULL_STR, null, VALUE,    null,        NULL_STR),
-        helperFieldMap("",       "",       GET,  VALUE,    defaultPort, "")
+        helperFieldMap("",       "",       GET,  VALUE,    DEFAULT_PORT, FTP)
       ),
       Arguments.of(
         helperFieldMap(NULL_STR, NULL_STR, null, NULL_STR, INT_VALUE,   NULL_STR),
-        helperFieldMap("",       "",       GET,  "",       INT_VALUE,   "")
+        helperFieldMap("",       "",       GET,  "",       INT_VALUE,   FTP)
       ),
       Arguments.of(
         helperFieldMap(NULL_STR, NULL_STR, null, NULL_STR, null,        VALUE),
-        helperFieldMap("",       "",       GET,  "",       defaultPort, VALUE)
+        helperFieldMap("",       "",       GET,  "",       DEFAULT_PORT, VALUE)
       ),
       Arguments.of(
         helperFieldMap(VALUE,    VALUE,    PUT,  VALUE,    INT_VALUE,   VALUE),
@@ -385,7 +386,10 @@ class FtpTaskTest {
    *
    * @return The built arguments map.
    */
-  private static Map<String, Object> helperFieldMap(String destinationPath, String host, SftpOp op, String originPath, Integer port, String scheme ) {
+  private static Map<String, Object> helperFieldMap(
+    String destinationPath, String host, SftpOp op, String originPath, Integer port, String scheme
+  ) {
+
     final Map<String, Object> map = new HashMap<>();
 
     map.put(DESTINATIONPATH, destinationPath);

@@ -43,6 +43,8 @@ class WorkflowTest {
   private static final String UPDATEDON         = "updatedOn";
   private static final String VERSIONTAG        = "versionTag";
 
+  private static final Integer HIST_TTL = 90;
+
   /**
    * Provide a version string for the default version.
    */
@@ -328,63 +330,75 @@ class WorkflowTest {
     final Setup setup = spy(new Setup());
     final Setup setupNull = null;
 
-    return List.of(
-      Arguments.of(
-        helperFieldMap(null,  null, null,  null,      null,  null,    null,      null,  null,    setupNull),
-        helperFieldMap(false, null, NOW,   0,         "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  HASH, null,  null,      null,  null,    null,      null,  null,    setupNull),
-        helperFieldMap(false, HASH, NOW,   0,         "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, LATER, null,      null,  null,    null,      null,  null,    setupNull),
-        helperFieldMap(false, null, LATER, 0,         "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(true,  null, null,  null,      null,  null,    null,      null,  null,    setupNull),
-        helperFieldMap(true,  null, NOW,   0,         "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, null,  INT_VALUE, null,  null,    null,      null,  null,    setupNull),
-        helperFieldMap(false, null, NOW,   INT_VALUE, "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, null, null,       VALUE, null,    null,      null,  null,    setupNull),
-        helperFieldMap(false, null, NOW,  0,          VALUE, icEmpty, emptyList, NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                           null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, null,  null,      null,  ic,      null,      null,  null,    setupNull),
-        helperFieldMap(false, null, NOW,   0,         "",    ic,      emptyList, NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, null,  null,      null,  null,    nodeList,  null,  null,    setupNull),
-        helperFieldMap(false, null, NOW,   0,         "",    icEmpty, nodeList,  NOW,   VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, null,  null,      null,  null,    null,      LATER, null,    setupNull),
-        helperFieldMap(false, null, NOW,   0,         "",    icEmpty, emptyList, LATER, VERSION, setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, null,  null,      null,  null,    null,      null,  VALUE,   setupNull),
-        helperFieldMap(false, null, NOW,   0,         "",    icEmpty, emptyList, NOW,   VALUE,   setupNull),
-        helperPersistMap(                                                                        null)
-      ),
-      Arguments.of(
-        helperFieldMap(null,  null, null,  null,      null,  null,    null,      null,  null,    setup),
-        helperFieldMap(false, null, NOW,   0,         "",    icEmpty, emptyList, NOW,   VERSION, setup),
-        helperPersistMap(                                                                        true)
-      )
-    ).stream();
+    final List<Arguments> arguments = new ArrayList<>();
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null,  null,       null,  null,    null,      null,  null,    setupNull),
+      helperFieldMap(false, null, NOW,   HIST_TTL,   "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  HASH, null,  null,      null,  null,    null,      null,  null,    setupNull),
+      helperFieldMap(false, HASH, NOW,   HIST_TTL,  "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, LATER, null,      null,  null,    null,      null,  null,    setupNull),
+      helperFieldMap(false, null, LATER, HIST_TTL,  "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(true,  null, null,  null,      null,  null,    null,      null,  null,    setupNull),
+      helperFieldMap(true,  null, NOW,   HIST_TTL,  "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null,  INT_VALUE, null,  null,    null,      null,  null,    setupNull),
+      helperFieldMap(false, null, NOW,   INT_VALUE, "",    icEmpty, emptyList, NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null, null,       VALUE, null,    null,      null,  null,    setupNull),
+      helperFieldMap(false, null, NOW,  HIST_TTL,          VALUE, icEmpty, emptyList, NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                           null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null,  null,      null,  ic,      null,      null,  null,    setupNull),
+      helperFieldMap(false, null, NOW,   HIST_TTL,  "",    ic,      emptyList, NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null,  null,      null,  null,    nodeList,  null,  null,    setupNull),
+      helperFieldMap(false, null, NOW,   HIST_TTL,  "",    icEmpty, nodeList,  NOW,   VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null,  null,      null,  null,    null,      LATER, null,    setupNull),
+      helperFieldMap(false, null, NOW,   HIST_TTL,  "",    icEmpty, emptyList, LATER, VERSION, setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null,  null,      null,  null,    null,      null,  VALUE,   setupNull),
+      helperFieldMap(false, null, NOW,   HIST_TTL,  "",    icEmpty, emptyList, NOW,   VALUE,   setupNull),
+      helperPersistMap(                                                                        null)
+    ));
+
+    arguments.add(Arguments.of(
+      helperFieldMap(null,  null, null,  null,      null,  null,    null,      null,  null,    setup),
+      helperFieldMap(false, null, NOW,   HIST_TTL,  "",    icEmpty, emptyList, NOW,   VERSION, setup),
+      helperPersistMap(                                                                        true)
+    ));
+
+    return arguments.stream();
   }
 
   /**
