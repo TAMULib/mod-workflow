@@ -1,7 +1,6 @@
 package org.folio.rest.workflow.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -14,8 +13,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,12 +53,12 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   @Column(unique = true)
   private String deploymentId;
 
-  @Size(min = 0, max = 512)
-  @Column(nullable = true)
+  @Column(columnDefinition = "TEXT", nullable = true)
   private String description;
 
   @Min(0)
   @Column(nullable = false)
+  @ColumnDefault("90")
   private Integer historyTimeToLive;
 
   @ElementCollection
@@ -72,8 +69,7 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Map<String, JsonNode> initialContext;
 
-  @Size(min = 4, max = 64)
-  @Column(nullable = false, unique = true)
+  @Column(columnDefinition = "TEXT default false", unique = true)
   private String name;
 
   @OneToMany
@@ -87,8 +83,8 @@ public class Workflow extends AbstractBaseEntity implements HasChecksum, HasCrea
   private Instant updatedOn;
 
   @Version
-  @Size(min = 1, max = 64)
   @Column(nullable = false)
+  @ColumnDefault("'1.0'")
   private String versionTag;
 
   public Workflow() {

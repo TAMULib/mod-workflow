@@ -4,32 +4,34 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.PrePersist;
 import org.folio.rest.workflow.enums.ScriptType;
 import org.folio.rest.workflow.model.has.common.HasEmbeddedProcessorCommon;
+import org.hibernate.annotations.ColumnDefault;
 
 @Embeddable
 public class EmbeddedProcessor implements HasEmbeddedProcessorCommon {
 
   // Must be designated as nullable even if this is not supposed to be NULL.
   @Column(nullable = true)
+  @ColumnDefault("0")
   private Integer buffer;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
-  @Column(columnDefinition = "TEXT", nullable = true)
+  @Column(columnDefinition = "TEXT default ''", nullable = true)
   private String code;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
   @Column(nullable = true)
+  @ColumnDefault("0")
   private Integer delay;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
-  @Size(min = 4, max = 128)
   @Column(nullable = true)
   private String functionName;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
-  @Column(nullable = true)
+  @Column(columnDefinition = "TEXT default 'js'", nullable = true)
   @Enumerated(EnumType.STRING)
   private ScriptType scriptType;
 
@@ -49,6 +51,7 @@ public class EmbeddedProcessor implements HasEmbeddedProcessorCommon {
    * Embeddables do not utilize @PrePersist annotation due to it not working well in certain circumstances.
    * Therefore, this must be manually called by the class utilizing this class.
    */
+  @PrePersist
   public void prePersist() {
     if (buffer == null) {
       buffer = 0;

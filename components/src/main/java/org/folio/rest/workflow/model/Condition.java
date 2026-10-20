@@ -3,18 +3,15 @@ package org.folio.rest.workflow.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.model.components.Conditional;
 
 @Entity
 public class Condition extends Node implements Conditional {
 
-  @Size(min = 2, max = 64)
-  @Column(nullable = false)
+  @Column(columnDefinition = "TEXT", nullable = false)
   private String answer;
 
-  @Size(min = 4, max = 128)
-  @Column(nullable = false)
+  @Column(columnDefinition = "TEXT", nullable = false)
   private String expression;
 
   public Condition() {

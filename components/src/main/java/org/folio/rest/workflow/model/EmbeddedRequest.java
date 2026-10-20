@@ -8,6 +8,7 @@ import jakarta.persistence.PrePersist;
 import org.folio.rest.workflow.enums.HttpMethod;
 import org.folio.rest.workflow.model.has.HasUrl;
 import org.folio.rest.workflow.model.has.common.HasEmbeddedRequestCommon;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.http.MediaType;
 
 @Embeddable
@@ -15,6 +16,7 @@ public class EmbeddedRequest implements HasEmbeddedRequestCommon, HasUrl {
 
   // Must be designated as nullable even if this is not supposed to be NULL.
   @Column(nullable = true)
+  @ColumnDefault("'" + MediaType.APPLICATION_JSON_VALUE + "'")
   private String accept;
 
   @Column(columnDefinition = "TEXT", nullable = true)
@@ -22,20 +24,25 @@ public class EmbeddedRequest implements HasEmbeddedRequestCommon, HasUrl {
 
   // Must be designated as nullable even if this is not supposed to be NULL.
   @Column(nullable = true)
+  @ColumnDefault("'" + MediaType.APPLICATION_JSON_VALUE + "'")
   private String contentType;
 
+  @Column(nullable = false)
+  @ColumnDefault("false")
   private boolean iterable;
 
   private String iterableKey;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
   @Column(nullable = true)
+  @ColumnDefault("'GET'")
   @Enumerated(EnumType.STRING)
   private HttpMethod method;
 
   private String responseKey;
 
   @Column(nullable = false)
+  @ColumnDefault("true")
   private Boolean sendEmptyBody;
 
   // Must be designated as nullable even if this is not supposed to be NULL.

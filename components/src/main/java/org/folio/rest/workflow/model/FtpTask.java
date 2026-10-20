@@ -11,6 +11,7 @@ import org.folio.rest.workflow.model.has.HasPassword;
 import org.folio.rest.workflow.model.has.HasService;
 import org.folio.rest.workflow.model.has.HasUsername;
 import org.folio.rest.workflow.model.has.common.HasFtpTaskCommon;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 public class FtpTask extends AbstractTask implements DelegateTask, HasFtpTaskCommon, HasPassword, HasService, HasUsername {
@@ -21,8 +22,9 @@ public class FtpTask extends AbstractTask implements DelegateTask, HasFtpTaskCom
   @Column(nullable = false)
   private String host;
 
-  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @ColumnDefault("'GET'")
+  @Enumerated(EnumType.STRING)
   private SftpOp op;
 
   @Column(nullable = false)
@@ -32,9 +34,11 @@ public class FtpTask extends AbstractTask implements DelegateTask, HasFtpTaskCom
   private String password;
 
   @Column(nullable = false)
+  @ColumnDefault("80")
   private Integer port;
 
   @Column(nullable = false)
+  @ColumnDefault("'ftp'")
   private String scheme;
 
   @Column(nullable = true)

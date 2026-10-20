@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.enums.VariableType;
 import org.folio.rest.workflow.model.has.common.HasEmbeddedVariableCommon;
 import org.hibernate.annotations.ColumnDefault;
@@ -12,12 +11,12 @@ import org.hibernate.annotations.ColumnDefault;
 @Embeddable
 public class EmbeddedVariable implements HasEmbeddedVariableCommon {
 
-  @Size(min = 4, max = 64)
-  @Column(name = "vkey", nullable = true)
+  @Column(name = "vkey", columnDefinition = "TEXT", nullable = true)
   private String key;
 
   // Must be designated as nullable even if this is not supposed to be NULL.
   @Column(nullable = true)
+  @ColumnDefault("'PROCESS'")
   @Enumerated(EnumType.STRING)
   private VariableType type;
 

@@ -3,17 +3,18 @@ package org.folio.rest.workflow.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
-import jakarta.validation.constraints.Size;
 import org.folio.rest.workflow.model.components.DelegateTask;
 import org.folio.rest.workflow.model.has.common.HasEmailTaskCommon;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 public class EmailTask extends AbstractTask implements DelegateTask, HasEmailTaskCommon {
 
-  @Column(nullable = true)
+  @Column(columnDefinition = "TEXT", nullable = true)
   private String attachmentPath;
 
   @Column(nullable = false)
+  @ColumnDefault("false")
   private Boolean includeAttachment;
 
   @Column(nullable = true)
@@ -22,23 +23,19 @@ public class EmailTask extends AbstractTask implements DelegateTask, HasEmailTas
   @Column(nullable = true)
   private String mailCc;
 
-  @Size(min = 3, max = 256)
   @Column(nullable = false)
   private String mailFrom;
 
-  @Size(min = 2)
   @Column(columnDefinition = "TEXT", nullable = false)
   private String mailText;
 
-  @Size(min = 3, max = 256)
   @Column(nullable = false)
   private String mailTo;
 
   @Column(columnDefinition = "TEXT", nullable = true)
   private String mailMarkup;
 
-  @Size(min = 2, max = 256)
-  @Column(nullable = false)
+  @Column(columnDefinition = "TEXT", nullable = false)
   private String mailSubject;
 
   public EmailTask() {

@@ -9,6 +9,7 @@ import org.folio.rest.workflow.enums.CompressFileContainer;
 import org.folio.rest.workflow.enums.CompressFileFormat;
 import org.folio.rest.workflow.model.components.DelegateTask;
 import org.folio.rest.workflow.model.has.common.HasCompressFileTaskCommon;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 public class CompressFileTask extends AbstractTask implements DelegateTask, HasCompressFileTaskCommon {
@@ -21,10 +22,12 @@ public class CompressFileTask extends AbstractTask implements DelegateTask, HasC
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @ColumnDefault("'ZIP'")
   private CompressFileFormat format;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @ColumnDefault("'NONE'")
   private CompressFileContainer container;
 
   public CompressFileTask() {

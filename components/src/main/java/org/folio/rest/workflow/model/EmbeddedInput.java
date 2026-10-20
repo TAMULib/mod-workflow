@@ -35,6 +35,7 @@ public class EmbeddedInput implements HasEmbeddedInputCommon {
 
   // Must be designated as nullable even if this is not supposed to be NULL.
   @Column(nullable = true)
+  @ColumnDefault("'TEXT'")
   @Enumerated(EnumType.STRING)
   private InputType inputType;
 

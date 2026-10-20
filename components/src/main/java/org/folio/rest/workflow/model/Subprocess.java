@@ -10,6 +10,7 @@ import org.folio.rest.workflow.enums.SubprocessType;
 import org.folio.rest.workflow.model.components.Branch;
 import org.folio.rest.workflow.model.components.MultiInstance;
 import org.folio.rest.workflow.model.has.HasSubProcessType;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 public class Subprocess extends AbstractProcess implements Branch, HasSubProcessType, MultiInstance {
@@ -18,6 +19,7 @@ public class Subprocess extends AbstractProcess implements Branch, HasSubProcess
   private EmbeddedLoopReference loopRef;
 
   @Column(nullable = false)
+  @ColumnDefault("'EMBEDDED'")
   @Enumerated(EnumType.STRING)
   private SubprocessType type;
 
